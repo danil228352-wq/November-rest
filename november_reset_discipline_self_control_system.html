@@ -1,0 +1,1485 @@
+<!DOCTYPE html>
+<html lang="ru" class="dark">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>NOVEMBER RESET — Discipline is Freedom</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#ecfdf5',
+                            100: '#d1fae5',
+                            400: '#34d399',
+                            500: '#10b981',
+                            600: '#059669',
+                            900: '#064e3b',
+                            accent: '#10b981'
+                        },
+                        dark: {
+                            bg: '#09090b',
+                            card: '#121215',
+                            border: '#27272a',
+                            hover: '#1c1c21'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', '-apple-system', 'sans-serif']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Font Inter & Lucide Icons & Chart.js -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #09090b;
+            color: #f4f4f5;
+            -webkit-tap-highlight-color: transparent;
+        }
+        /* Custom scrollbar */
+        ::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #09090b;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #27272a;
+            border-radius: 9999px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #3f3f46;
+        }
+        .glass-card {
+            background: rgba(18, 18, 21, 0.75);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(39, 39, 42, 0.8);
+        }
+        .pulse-red {
+            box-shadow: 0 0 15px rgba(239, 68, 68, 0.4);
+            animation: pulse-red-anim 2s infinite;
+        }
+        @keyframes pulse-red-anim {
+            0%, 100% { opacity: 1; transform: scale(1); }
+            50% { opacity: 0.85; transform: scale(0.99); }
+        }
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="bg-dark-bg text-zinc-100 min-h-screen flex flex-col md:flex-row pb-20 md:pb-0 overflow-x-hidden">
+
+    <!-- DESKTOP SIDEBAR -->
+    <aside class="hidden md:flex flex-col w-64 border-r border-dark-border bg-dark-card p-5 h-screen sticky top-0 justify-between shrink-0">
+        <div>
+            <!-- Logo Header -->
+            <div class="flex items-center space-x-3 mb-8 px-2">
+                <div class="w-9 h-9 rounded-xl bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+                    <i data-lucide="shield-check" class="w-5 h-5"></i>
+                </div>
+                <div>
+                    <h1 class="font-extrabold text-lg tracking-wider text-white leading-none">NOV RESET</h1>
+                    <span class="text-[10px] text-zinc-500 tracking-widest font-mono">DISCIPLINE IS FREEDOM</span>
+                </div>
+            </div>
+
+            <!-- Mode Selector Widget -->
+            <div class="mb-6 p-3 rounded-xl bg-dark-bg border border-dark-border">
+                <div class="text-xs text-zinc-400 font-medium mb-2 flex items-center justify-between">
+                    <span>РЕЖИМ ДНЯ</span>
+                    <span id="desktop-mode-badge" class="px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30">GREEN</span>
+                </div>
+                <div class="grid grid-cols-3 gap-1 bg-zinc-900/80 p-1 rounded-lg border border-zinc-800">
+                    <button onclick="setDayMode('GREEN')" id="btn-mode-green" class="py-1.5 text-xs font-semibold rounded text-center transition-all bg-emerald-500/20 text-emerald-400">GREEN</button>
+                    <button onclick="setDayMode('YELLOW')" id="btn-mode-yellow" class="py-1.5 text-xs font-semibold rounded text-center transition-all text-zinc-400 hover:text-white">YELLOW</button>
+                    <button onclick="setDayMode('RED')" id="btn-mode-red" class="py-1.5 text-xs font-semibold rounded text-center transition-all text-zinc-400 hover:text-white">RED</button>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <button onclick="switchTab('overview')" data-tab="overview" class="nav-btn active w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-colors text-white bg-brand-500/10 border border-brand-500/20">
+                    <i data-lucide="layout-dashboard" class="w-4 h-4 text-brand-400"></i>
+                    <span>Главная</span>
+                </button>
+                <button onclick="switchTab('routine')" data-tab="routine" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-hover transition-colors">
+                    <i data-lucide="clock" class="w-4 h-4"></i>
+                    <span>Расписание</span>
+                </button>
+                <button onclick="switchTab('habits')" data-tab="habits" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-hover transition-colors">
+                    <i data-lucide="check-square" class="w-4 h-4"></i>
+                    <span>Привычки</span>
+                </button>
+                <button onclick="switchTab('abstinence')" data-tab="abstinence" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-hover transition-colors">
+                    <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i>
+                    <span>Воздержание</span>
+                </button>
+                <button onclick="switchTab('focus')" data-tab="focus" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-hover transition-colors">
+                    <i data-lucide="target" class="w-4 h-4"></i>
+                    <span>Задачи & Фокус</span>
+                </button>
+                <button onclick="switchTab('analytics')" data-tab="analytics" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-hover transition-colors">
+                    <i data-lucide="bar-chart-2" class="w-4 h-4"></i>
+                    <span>Статистика</span>
+                </button>
+                <button onclick="switchTab('settings')" data-tab="settings" class="nav-btn w-full flex items-center space-x-3 px-3 py-2.5 rounded-lg text-sm font-medium text-zinc-400 hover:text-white hover:bg-dark-hover transition-colors">
+                    <i data-lucide="settings" class="w-4 h-4"></i>
+                    <span>Настройки</span>
+                </button>
+            </nav>
+        </div>
+
+        <div class="pt-4 border-t border-dark-border text-xs text-zinc-500 flex justify-between items-center">
+            <span>UA School Edition</span>
+            <span class="font-mono text-[10px] text-zinc-600">v1.0.0</span>
+        </div>
+    </aside>
+
+    <!-- MOBILE NAVBAR (BOTTOM) -->
+    <nav class="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-dark-card/95 backdrop-blur-md border-t border-dark-border flex justify-around items-center px-1 py-2">
+        <button onclick="switchTab('overview')" data-tab="overview" class="mobile-nav-btn flex flex-col items-center py-1 px-2 text-brand-400">
+            <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
+            <span class="text-[10px] mt-1">Главная</span>
+        </button>
+        <button onclick="switchTab('habits')" data-tab="habits" class="mobile-nav-btn flex flex-col items-center py-1 px-2 text-zinc-400">
+            <i data-lucide="check-square" class="w-5 h-5"></i>
+            <span class="text-[10px] mt-1">Привычки</span>
+        </button>
+        <button onclick="switchTab('abstinence')" data-tab="abstinence" class="mobile-nav-btn flex flex-col items-center py-1 px-2 text-zinc-400 relative">
+            <div class="absolute -top-1 right-2 w-2 h-2 rounded-full bg-amber-500"></div>
+            <i data-lucide="flame" class="w-5 h-5"></i>
+            <span class="text-[10px] mt-1">Контроль</span>
+        </button>
+        <button onclick="switchTab('focus')" data-tab="focus" class="mobile-nav-btn flex flex-col items-center py-1 px-2 text-zinc-400">
+            <i data-lucide="target" class="w-5 h-5"></i>
+            <span class="text-[10px] mt-1">Задачи</span>
+        </button>
+        <button onclick="switchTab('routine')" data-tab="routine" class="mobile-nav-btn flex flex-col items-center py-1 px-2 text-zinc-400">
+            <i data-lucide="clock" class="w-5 h-5"></i>
+            <span class="text-[10px] mt-1">График</span>
+        </button>
+        <button onclick="switchTab('analytics')" data-tab="analytics" class="mobile-nav-btn flex flex-col items-center py-1 px-2 text-zinc-400">
+            <i data-lucide="bar-chart-2" class="w-5 h-5"></i>
+            <span class="text-[10px] mt-1">Анализ</span>
+        </button>
+    </nav>
+
+    <!-- MAIN CONTENT AREA -->
+    <main class="flex-1 p-4 md:p-8 max-w-6xl mx-auto w-full overflow-y-auto">
+        
+        <!-- TOP MOBILE BAR WITH MODE SELECTOR -->
+        <header class="md:hidden flex justify-between items-center mb-6 pb-4 border-b border-dark-border">
+            <div class="flex items-center space-x-2">
+                <div class="w-8 h-8 rounded-lg bg-brand-500/10 border border-brand-500/30 flex items-center justify-center text-brand-400">
+                    <i data-lucide="shield-check" class="w-4 h-4"></i>
+                </div>
+                <span class="font-bold text-sm tracking-wide">NOVEMBER RESET</span>
+            </div>
+            
+            <!-- Mobile Mode Switcher Modal Trigger -->
+            <button onclick="openMobileModeModal()" id="mobile-mode-badge" class="px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1">
+                <span id="mobile-mode-text">GREEN</span>
+                <i data-lucide="chevron-down" class="w-3 h-3"></i>
+            </button>
+        </header>
+
+        <!-- EMERGENCY ALERTS BAR IF RED OR YELLOW -->
+        <div id="mode-status-banner" class="hidden mb-6 p-4 rounded-xl border flex items-center justify-between transition-all">
+            <div class="flex items-center space-x-3">
+                <i id="banner-icon" data-lucide="alert-triangle" class="w-6 h-6 shrink-0"></i>
+                <div>
+                    <h4 id="banner-title" class="font-bold text-sm"></h4>
+                    <p id="banner-desc" class="text-xs opacity-90"></p>
+                </div>
+            </div>
+            <button onclick="setDayMode('GREEN')" class="text-xs px-3 py-1.5 rounded-lg bg-white/10 hover:bg-white/20 font-medium">Сбросить в GREEN</button>
+        </div>
+
+        <!-- TAB 1: OVERVIEW -->
+        <section id="tab-overview" class="tab-content space-y-6">
+            
+            <!-- Greeting & Quick Status Header -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 glass-card p-6 rounded-2xl relative overflow-hidden">
+                <div class="absolute -right-10 -bottom-10 w-48 h-48 bg-brand-500/5 rounded-full blur-3xl pointer-events-none"></div>
+                <div>
+                    <span id="greeting-time" class="text-xs font-semibold tracking-wider text-brand-400 uppercase">ДОБРЫЙ ДЕНЬ</span>
+                    <h2 class="text-2xl md:text-3xl font-extrabold mt-1 text-white">День <span id="current-day-num">1</span> <span class="text-zinc-500 text-lg font-normal">/ 30</span></h2>
+                    <p id="quote-display" class="text-sm text-zinc-400 mt-2 max-w-xl italic">«Дисциплина — это выбор между тем, чего ты хочешь прямо сейчас, и тем, чего ты хочешь больше всего.»</p>
+                </div>
+                <button onclick="switchTab('habits')" class="self-start md:self-center px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-brand-500/20 flex items-center space-x-2 shrink-0">
+                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                    <span>Отметить сегодня</span>
+                </button>
+            </div>
+
+            <!-- Key Metrics Grid -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <!-- Days Streak -->
+                <div class="glass-card p-4 rounded-xl border border-dark-border flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="text-xs font-medium">Серия дней</span>
+                        <i data-lucide="flame" class="w-4 h-4 text-amber-500"></i>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-2xl md:text-3xl font-extrabold text-white" id="stat-streak">0</div>
+                        <span class="text-[10px] text-zinc-500">дней подряд без пропусков</span>
+                    </div>
+                </div>
+
+                <!-- Habits Completion % -->
+                <div class="glass-card p-4 rounded-xl border border-dark-border flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="text-xs font-medium">Привычки сегодня</span>
+                        <i data-lucide="check-square" class="w-4 h-4 text-brand-400"></i>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-2xl md:text-3xl font-extrabold text-white" id="stat-habits-pct">0%</div>
+                        <span class="text-[10px] text-zinc-500" id="stat-habits-ratio">0 из 0 закрашено</span>
+                    </div>
+                </div>
+
+                <!-- Abstinence Streak -->
+                <div class="glass-card p-4 rounded-xl border border-dark-border flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="text-xs font-medium">Самоконтроль</span>
+                        <i data-lucide="shield" class="w-4 h-4 text-emerald-400"></i>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-2xl md:text-3xl font-extrabold text-white" id="stat-abst-days">0</div>
+                        <span class="text-[10px] text-zinc-500">дней чистоты</span>
+                    </div>
+                </div>
+
+                <!-- Tasks Completed -->
+                <div class="glass-card p-4 rounded-xl border border-dark-border flex flex-col justify-between">
+                    <div class="flex items-center justify-between text-zinc-400">
+                        <span class="text-xs font-medium">Задачи</span>
+                        <i data-lucide="list-todo" class="w-4 h-4 text-blue-400"></i>
+                    </div>
+                    <div class="mt-4">
+                        <div class="text-2xl md:text-3xl font-extrabold text-white" id="stat-tasks-done">0</div>
+                        <span class="text-[10px] text-zinc-500">выполнено сегодня</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Interactive Circular Progress & Daily Quick Checklist -->
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Circular Chart Card -->
+                <div class="glass-card p-6 rounded-2xl border border-dark-border flex flex-col items-center justify-center text-center">
+                    <h3 class="text-sm font-bold text-zinc-300 mb-4 self-start">Общий прогресс дня</h3>
+                    <div class="relative w-44 h-44 flex items-center justify-center my-2">
+                        <svg class="w-full h-full transform -rotate-90" viewBox="0 0 36 36">
+                            <path class="text-zinc-800" stroke-width="3" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                            <path id="circle-progress-bar" class="text-brand-500 transition-all duration-700 ease-out" stroke-dasharray="0, 100" stroke-width="3" stroke-linecap="round" stroke="currentColor" fill="none" d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831" />
+                        </svg>
+                        <div class="absolute flex flex-col items-center justify-center">
+                            <span id="circle-pct-text" class="text-3xl font-black text-white">0%</span>
+                            <span class="text-[10px] text-zinc-500 uppercase tracking-wider font-semibold">Дисциплина</span>
+                        </div>
+                    </div>
+                    <p class="text-xs text-zinc-400 mt-2" id="circle-status-text">Завершите утренний ритуал и задачи</p>
+                </div>
+
+                <!-- Quick Habit List -->
+                <div class="glass-card p-6 rounded-2xl border border-dark-border lg:col-span-2 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="text-sm font-bold text-zinc-300">Быстрый чек-лист привычек</h3>
+                            <button onclick="switchTab('habits')" class="text-xs text-brand-400 hover:underline">Все привычки &rarr;</button>
+                        </div>
+                        <div id="overview-habits-list" class="space-y-2 max-h-56 overflow-y-auto pr-1">
+                            <!-- Populated dynamically via JS -->
+                        </div>
+                    </div>
+                    <div class="mt-4 pt-3 border-t border-dark-border flex items-center justify-between text-xs text-zinc-500">
+                        <span>Режим: <strong id="overview-mode-name" class="text-emerald-400">GREEN</strong></span>
+                        <span>Штрафы в нештатном режиме не начисляются</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Targets & Goals Mini View -->
+            <div class="glass-card p-6 rounded-2xl border border-dark-border">
+                <div class="flex items-center justify-between mb-4">
+                    <div class="flex items-center space-x-2">
+                        <i data-lucide="target" class="w-4 h-4 text-brand-400"></i>
+                        <h3 class="text-sm font-bold text-zinc-300">Мои ключевые цели на 30 дней</h3>
+                    </div>
+                    <button onclick="openAddGoalModal()" class="text-xs px-2.5 py-1 rounded-lg bg-zinc-800 hover:bg-zinc-700 text-white font-medium">+ Цель</button>
+                </div>
+                <div id="goals-list" class="grid grid-cols-1 md:grid-cols-3 gap-3">
+                    <!-- Dynamic Goals -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 2: ROUTINE (SCHEDULE FOR UKRAINIAN SCHOOLER) -->
+        <section id="tab-routine" class="tab-content space-y-6 hidden">
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Мой распорядок дня</h2>
+                    <p class="text-xs text-zinc-400 mt-1">Ориентировочный график школьника с учётом отдыха и учебы. Это ориентиры, а не жесткие рамки.</p>
+                </div>
+                <button onclick="resetRoutineToDefault()" class="self-start px-3 py-1.5 rounded-lg border border-zinc-700 hover:bg-zinc-800 text-xs text-zinc-300">Сбросить на дефолт</button>
+            </div>
+
+            <div id="routine-timeline" class="space-y-3">
+                <!-- Populated dynamically -->
+            </div>
+        </section>
+
+        <!-- TAB 3: HABITS TRACKER -->
+        <section id="tab-habits" class="tab-content space-y-6 hidden">
+            <div class="flex items-center justify-between">
+                <div>
+                    <h2 class="text-2xl font-bold text-white">Трекер привычек</h2>
+                    <p class="text-xs text-zinc-400 mt-1">Формируй полезные действия каждый день. Выполняй по очереди.</p>
+                </div>
+                <button onclick="openAddHabitModal()" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-xs flex items-center space-x-1">
+                    <i data-lucide="plus" class="w-4 h-4"></i>
+                    <span>Новая привычка</span>
+                </button>
+            </div>
+
+            <!-- Habits Main Checklist -->
+            <div id="habits-full-list" class="space-y-3">
+                <!-- Dynamically populated habits -->
+            </div>
+        </section>
+
+        <!-- TAB 4: ABSTINENCE / SELF-CONTROL (ВОЗДЕРЖАНИЕ) -->
+        <section id="tab-abstinence" class="tab-content space-y-6 hidden">
+            <div class="glass-card p-6 rounded-2xl border border-amber-500/20 bg-gradient-to-r from-amber-500/5 to-transparent">
+                <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div>
+                        <div class="inline-flex items-center space-x-2 px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-semibold mb-2">
+                            <i data-lucide="flame" class="w-3.5 h-3.5"></i>
+                            <span>СЕКЦИЯ САМОКОНТРОЛЯ</span>
+                        </div>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white">Отказ от деструктивных привычек</h2>
+                        <p class="text-xs text-zinc-400 mt-1 max-w-xl">Раздел основан на личной свободе и тренировке воли. Срыв — это не поражение, а лишь точка пересборки. Без стыжения.</p>
+                    </div>
+                    <!-- Target Selector -->
+                    <div class="bg-dark-bg p-3 rounded-xl border border-dark-border flex flex-col space-y-1">
+                        <label class="text-[10px] uppercase font-bold text-zinc-500">Текущая цель</label>
+                        <select id="abstinence-target-select" onchange="updateAbstinenceTarget(this.value)" class="bg-zinc-900 border border-zinc-700 text-white text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-brand-500">
+                            <option value="7">7 Дней (Новичок)</option>
+                            <option value="14">14 Дней (Продвинутый)</option>
+                            <option value="30">30 Дней (Разгрузка)</option>
+                            <option value="60">60 Дней (Мастер)</option>
+                            <option value="90">90 Дней (Полный Перезапуск)</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Dual Trackers Grid (Pornography / Masturbation) -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <!-- Tracker 1: Pornography Abstinence -->
+                <div class="glass-card p-6 rounded-2xl border border-dark-border flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="eye-off" class="w-5 h-5 text-indigo-400"></i>
+                                <h3 class="font-bold text-white">Отказ от порнографического контента</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center py-6">
+                            <span class="text-5xl font-black text-white" id="porn-streak-count">0</span>
+                            <span class="text-xs text-zinc-400 block mt-1">дней чистой психики</span>
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-zinc-800 rounded-full h-2 mt-4 overflow-hidden">
+                                <div id="porn-progress-bar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button onclick="logAbstinenceSuccess('porn')" class="py-2.5 px-3 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 font-bold text-xs border border-indigo-500/30 flex items-center justify-center space-x-1">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Сегодня чисто</span>
+                        </button>
+                        <button onclick="logAbstinenceRelapse('porn')" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-medium text-xs flex items-center justify-center space-x-1">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <span>Отметить срыв</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Tracker 2: Masturbation Abstinence / Retention -->
+                <div class="glass-card p-6 rounded-2xl border border-dark-border flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div class="flex items-center space-x-2">
+                                <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
+                                <h3 class="font-bold text-white">Воздержание (Перенаправление энергии)</h3>
+                            </div>
+                        </div>
+                        
+                        <div class="text-center py-6">
+                            <span class="text-5xl font-black text-white" id="mast-streak-count">0</span>
+                            <span class="text-xs text-zinc-400 block mt-1">дней контроля</span>
+                            <!-- Progress Bar -->
+                            <div class="w-full bg-zinc-800 rounded-full h-2 mt-4 overflow-hidden">
+                                <div id="mast-progress-bar" class="bg-amber-500 h-full transition-all duration-500" style="width: 0%"></div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-2 mt-4">
+                        <button onclick="logAbstinenceSuccess('mast')" class="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs border border-amber-500/30 flex items-center justify-center space-x-1">
+                            <i data-lucide="check" class="w-4 h-4"></i>
+                            <span>Удержался сегодня</span>
+                        </button>
+                        <button onclick="logAbstinenceRelapse('mast')" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-medium text-xs flex items-center justify-center space-x-1">
+                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
+                            <span>Сбросить серию</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Tactical Advice & Mindset Guidelines -->
+            <div class="glass-card p-6 rounded-2xl border border-dark-border">
+                <h3 class="font-bold text-sm text-zinc-200 mb-4 flex items-center space-x-2">
+                    <i data-lucide="lightbulb" class="w-4 h-4 text-amber-400"></i>
+                    <span>Стратегии при возникновении позывов</span>
+                </h3>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 text-xs text-zinc-400">
+                    <div class="p-3 bg-dark-bg rounded-xl border border-dark-border">
+                        <strong class="text-zinc-200 block mb-1">1. Телефон вне спальни</strong>
+                        Не ложись в кровать с телефоном в руках. Оставляй устройство на столе или в другой части комнаты за 30 минут до сна.
+                    </div>
+                    <div class="p-3 bg-dark-bg rounded-xl border border-dark-border">
+                        <strong class="text-zinc-200 block mb-1">2. Правило 10–15 минут</strong>
+                        Импульс длится в среднем 10 минут. Скажи себе: «Я подожду 10 минут». Переключись на отжимания, холодную воду или приседания.
+                    </div>
+                    <div class="p-3 bg-dark-bg rounded-xl border border-dark-border">
+                        <strong class="text-zinc-200 block mb-1">3. Чистка триггеров</strong>
+                        Удали или заблокируй паблики, каналы и профили в соцсетях, вызывающие провоцирующие мысли.
+                    </div>
+                    <div class="p-3 bg-dark-bg rounded-xl border border-dark-border">
+                        <strong class="text-zinc-200 block mb-1">4. Адекватное отношение</strong>
+                        Срыв — это статистика, а не личное поражение. Проанализируй, из-за чего это произошло (скука, стресс, усталость) и двигайся дальше.
+                    </div>
+                </div>
+            </div>
+
+            <!-- History Log -->
+            <div class="glass-card p-6 rounded-2xl border border-dark-border">
+                <h3 class="font-bold text-sm text-zinc-200 mb-3">История попыток и записей</h3>
+                <div id="abstinence-history-log" class="space-y-2 max-h-48 overflow-y-auto text-xs text-zinc-400 pr-1">
+                    <!-- Dynamic entries -->
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 5: ANTIPROCRASTINATION & TASKS -->
+        <section id="tab-focus" class="tab-content space-y-6 hidden">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                <!-- Pomodoro Timer Box -->
+                <div class="glass-card p-6 rounded-2xl border border-dark-border flex flex-col items-center justify-center text-center">
+                    <div class="inline-flex items-center space-x-1.5 px-3 py-1 rounded-full bg-brand-500/10 text-brand-400 text-xs font-semibold mb-4">
+                        <i data-lucide="timer" class="w-3.5 h-3.5"></i>
+                        <span>POMODORO 25/5</span>
+                    </div>
+                    
+                    <div class="text-6xl font-black font-mono text-white tracking-widest my-4" id="pomodoro-timer">25:00</div>
+
+                    <div class="flex items-center space-x-3 mt-2">
+                        <button onclick="togglePomodoro()" id="btn-pomodoro-start" class="px-6 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-brand-500/20">
+                            Начать работать
+                        </button>
+                        <button onclick="resetPomodoro()" class="p-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300">
+                            <i data-lucide="rotate-ccw" class="w-4 h-4"></i>
+                        </button>
+                    </div>
+
+                    <!-- 5-Minute Rule Tip -->
+                    <div class="mt-6 p-3 bg-dark-bg rounded-xl border border-dark-border text-left w-full">
+                        <strong class="text-xs text-white block mb-0.5">⚡ Правило 5 минут:</strong>
+                        <p class="text-[11px] text-zinc-400">Если лень начинать задачу — пообещай себе делать её ровно 5 минут. По истечении 5 минут 80% людей продолжают работать дальше.</p>
+                    </div>
+                </div>
+
+                <!-- Task List Box -->
+                <div class="glass-card p-6 rounded-2xl border border-dark-border lg:col-span-2 flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <div>
+                                <h3 class="font-bold text-base text-white">Список главных задач на сегодня</h3>
+                                <p class="text-xs text-zinc-400">Расставляй приоритеты и выполняй главное в первую очередь.</p>
+                            </div>
+                            <button onclick="openAddTaskModal()" class="px-3 py-1.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-medium flex items-center space-x-1">
+                                <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+                                <span>Добавить задачу</span>
+                            </button>
+                        </div>
+
+                        <!-- Task Items Container -->
+                        <div id="tasks-list-container" class="space-y-2 max-h-80 overflow-y-auto pr-1">
+                            <!-- Populated dynamically -->
+                        </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-dark-border flex justify-between items-center text-xs text-zinc-500">
+                        <span>Завершено задач: <strong id="tasks-completed-count" class="text-white">0</strong></span>
+                        <span>Приоритеты: Высокий / Средний / Низкий</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 6: ANALYTICS & STATISTICS -->
+        <section id="tab-analytics" class="tab-content space-y-6 hidden">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Аналитика и Статистика</h2>
+                <p class="text-xs text-zinc-400 mt-1">Отслеживай свой динамический прогресс за 7 и 30 дней.</p>
+            </div>
+
+            <!-- Chart Container -->
+            <div class="glass-card p-6 rounded-2xl border border-dark-border">
+                <h3 class="text-sm font-bold text-zinc-300 mb-4">Выполнение привычек (Проценты за 7 дней)</h3>
+                <div class="h-64 w-full">
+                    <canvas id="habitsChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Stats Grid Breakdown -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                <div class="glass-card p-5 rounded-2xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block font-medium">Режимы дня</span>
+                    <div class="mt-3 space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span class="text-emerald-400 font-semibold">GREEN (Обычный):</span>
+                            <span id="stat-count-green" class="font-bold text-white">0 дн.</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-amber-400 font-semibold">YELLOW (Форс-мажор):</span>
+                            <span id="stat-count-yellow" class="font-bold text-white">0 дн.</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span class="text-rose-400 font-semibold">RED (ЧП / Безопасность):</span>
+                            <span id="stat-count-red" class="font-bold text-white">0 дн.</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block font-medium">Рекорды серий</span>
+                    <div class="mt-3 space-y-2 text-xs">
+                        <div class="flex justify-between items-center">
+                            <span>Лучшая серия привычек:</span>
+                            <span id="best-habit-streak" class="font-bold text-brand-400">0 дней</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Рекорд чистых дней (Порно):</span>
+                            <span id="best-porn-streak" class="font-bold text-indigo-400">0 дней</span>
+                        </div>
+                        <div class="flex justify-between items-center">
+                            <span>Рекорд воздержания:</span>
+                            <span id="best-mast-streak" class="font-bold text-amber-400">0 дней</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card p-5 rounded-2xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block font-medium">Общий показатель фокуса</span>
+                    <div class="mt-2">
+                        <div class="text-3xl font-black text-white" id="overall-score-pct">0%</div>
+                        <p class="text-[11px] text-zinc-500 mt-1">Основано на соотношении успешных дней к общему числу прошедших дней челленджа.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- TAB 7: SETTINGS & DATA MANAGEMENT -->
+        <section id="tab-settings" class="tab-content space-y-6 hidden">
+            <div>
+                <h2 class="text-2xl font-bold text-white">Настройки и Управление Данными</h2>
+                <p class="text-xs text-zinc-400 mt-1">Сохраняй резервные копии или настраивай текущий день челленджа.</p>
+            </div>
+
+            <!-- Day Counter Manual Adjust -->
+            <div class="glass-card p-6 rounded-2xl border border-dark-border">
+                <h3 class="text-sm font-bold text-zinc-200 mb-2">Текущий день челленджа</h3>
+                <p class="text-xs text-zinc-400 mb-4">Вы можете вручную установить текущий день челленджа (1–30).</p>
+                <div class="flex items-center space-x-3">
+                    <input type="number" id="setting-day-input" min="1" max="30" class="w-24 bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-white font-bold text-sm focus:outline-none focus:border-brand-500">
+                    <button onclick="saveDayNumberSetting()" class="px-4 py-2 bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-xs rounded-xl">Сохранить день</button>
+                </div>
+            </div>
+
+            <!-- Export / Import Backups -->
+            <div class="glass-card p-6 rounded-2xl border border-dark-border">
+                <h3 class="text-sm font-bold text-zinc-200 mb-2">Резервное копирование (Export / Import)</h3>
+                <p class="text-xs text-zinc-400 mb-4">Экспортируйте все ваши данные в JSON файл, чтобы не потерять их при смене браузера или устройства.</p>
+                <div class="flex flex-wrap gap-3">
+                    <button onclick="exportAppData()" class="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold flex items-center space-x-2">
+                        <i data-lucide="download" class="w-4 h-4"></i>
+                        <span>Скачать бекап (Export)</span>
+                    </button>
+                    <label class="px-4 py-2.5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-white text-xs font-semibold cursor-pointer flex items-center space-x-2">
+                        <i data-lucide="upload" class="w-4 h-4"></i>
+                        <span>Восстановить (Import)</span>
+                        <input type="file" id="import-file-input" onchange="importAppData(event)" class="hidden" accept=".json">
+                    </label>
+                </div>
+            </div>
+
+            <!-- Danger Zone -->
+            <div class="glass-card p-6 rounded-2xl border border-red-500/20 bg-red-500/5">
+                <h3 class="text-sm font-bold text-red-400 mb-1">Опасная зона</h3>
+                <p class="text-xs text-zinc-400 mb-4">Полный сброс всех сохраненных локально данных приложения. Это действие нельзя отменить.</p>
+                <button onclick="resetAllAppData()" class="px-4 py-2.5 rounded-xl bg-red-600/20 hover:bg-red-600/30 border border-red-500/30 text-red-300 font-bold text-xs">
+                    Сбросить весь прогресс приложения
+                </button>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- MODAL 1: ADD HABIT MODAL -->
+    <div id="modal-add-habit" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-white">Новая привычка</h3>
+                <button onclick="closeModal('modal-add-habit')" class="text-zinc-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Название привычки</label>
+                <input type="text" id="input-habit-name" placeholder="Например: Прочитать 10 страниц" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModal('modal-add-habit')" class="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white">Отмена</button>
+                <button onclick="confirmAddHabit()" class="px-4 py-2 text-xs font-bold bg-brand-500 hover:bg-brand-600 text-zinc-950 rounded-xl">Создать</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 2: ADD TASK MODAL -->
+    <div id="modal-add-task" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-white">Добавить задачу</h3>
+                <button onclick="closeModal('modal-add-task')" class="text-zinc-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Описание задачи</label>
+                <input type="text" id="input-task-title" placeholder="Сделать ДЗ по математике" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Приоритет</label>
+                <select id="input-task-priority" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+                    <option value="high">Высокий</option>
+                    <option value="medium" selected>Средний</option>
+                    <option value="low">Низкий</option>
+                </select>
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModal('modal-add-task')" class="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white">Отмена</button>
+                <button onclick="confirmAddTask()" class="px-4 py-2 text-xs font-bold bg-brand-500 hover:bg-brand-600 text-zinc-950 rounded-xl">Добавить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 3: ADD GOAL MODAL -->
+    <div id="modal-add-goal" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-white">Моя цель на месяц</h3>
+                <button onclick="closeModal('modal-add-goal')" class="text-zinc-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Формулировка цели</label>
+                <input type="text" id="input-goal-title" placeholder="Например: Прочитать 2 книги / Подтянуться 15 раз" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModal('modal-add-goal')" class="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white">Отмена</button>
+                <button onclick="confirmAddGoal()" class="px-4 py-2 text-xs font-bold bg-brand-500 hover:bg-brand-600 text-zinc-950 rounded-xl">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL 4: MOBILE MODE SELECTOR -->
+    <div id="modal-mobile-mode" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-end justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 class="font-bold text-base text-white">Выберите режим дня</h3>
+                <button onclick="closeModal('modal-mobile-mode')" class="text-zinc-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <div class="space-y-2">
+                <button onclick="setDayMode('GREEN'); closeModal('modal-mobile-mode');" class="w-full p-3 rounded-xl bg-emerald-500/10 border border-emerald-500/30 text-emerald-400 text-left font-bold text-sm">
+                    GREEN — Обычный день (Учёба, задачи, привычки)
+                </button>
+                <button onclick="setDayMode('YELLOW'); closeModal('modal-mobile-mode');" class="w-full p-3 rounded-xl bg-amber-500/10 border border-amber-500/30 text-amber-400 text-left font-bold text-sm">
+                    YELLOW — Форс-мажор / Задержка / Тревога (Без штрафов)
+                </button>
+                <button onclick="setDayMode('RED'); closeModal('modal-mobile-mode');" class="w-full p-3 rounded-xl bg-rose-500/10 border border-rose-500/30 text-rose-400 text-left font-bold text-sm">
+                    RED — Чрезвычайная ситуация / Опасность (Безопасность в приоритете)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- JAVASCRIPT APP APPLICATION LOGIC -->
+    <script>
+        // --- DEFAULT DATA & INITIAL STATE ---
+        const DEFAULT_HABITS = [
+            { id: 'h1', title: 'Встал вовремя (до 08:00)', completed: false },
+            { id: 'h2', title: 'Сделал утреннюю зарядку', completed: false },
+            { id: 'h3', title: 'Выполнил учебные задачи (школа/ДЗ)', completed: false },
+            { id: 'h4', title: 'Не тратил лишнее время в телефоне', completed: false },
+            { id: 'h5', title: 'Был физически активен (прогулка/спорт)', completed: false },
+            { id: 'h6', title: 'Занимался саморазвитием (книга/навык)', completed: false },
+            { id: 'h7', title: 'Поддерживал порядок в комнате', completed: false },
+            { id: 'h8', title: 'Подготовился ко сну (телефон убран)', completed: false }
+        ];
+
+        const DEFAULT_ROUTINE = [
+            { id: 'r1', time: '07:50', title: 'Подъём, умывание, зарядка', desc: 'Быстрый старт дня, разминка' },
+            { id: 'r2', time: '08:00–08:40', title: 'Завтрак, гигиена и сборы', desc: 'Питательный завтрак, подготовка сумки' },
+            { id: 'r3', time: '08:40', title: 'Выход из дома', desc: 'Дорога в школу' },
+            { id: 'r4', time: '09:00–15:30', title: 'Учёба в школе', desc: 'Концентрация на уроках, общение' },
+            { id: 'r5', time: '15:30–17:00', title: 'Дорога домой, обед и отдых', desc: 'Перезагрузка после занятий' },
+            { id: 'r6', time: '17:00–18:00', title: 'Домашние задания', desc: 'Первый блок выполнения ДЗ' },
+            { id: 'r7', time: '18:00–20:00', title: 'Прогулка / Спорт / Друзья', desc: 'Физическая активность на свежем воздухе' },
+            { id: 'r8', time: '20:00', title: 'Ужин', desc: 'Прием пищи с семьей' },
+            { id: 'r9', time: '20:30–22:30', title: 'Личные проекты & Свободное время', desc: 'Доработка ДЗ, чтение, хобби' },
+            { id: 'r10', time: '22:30', title: 'Подготовка ко сну', desc: 'Убрать экраны, гигиена' },
+            { id: 'r11', time: '23:00', title: 'Сон', desc: 'Восстановление сил' }
+        ];
+
+        const MOTIVATIONAL_QUOTES = [
+            "«Дисциплина — это выбор между тем, чего ты хочешь прямо сейчас, и тем, чего ты хочешь больше всего.»",
+            "«Сложные времена создают сильных людей. Сильные люди создают легкие времена.»",
+            "«Побеждающий других силен, побеждающий самого себя могуществен.» — Лао-цзы",
+            "«Каждый день — это шаг к той версии себя, которой ты будешь гордиться через год.»",
+            "«Контролируй свое утро — и ты будешь контролировать весь день.»",
+            "«Не жди идеальных условий. Начинай там, где ты есть, с тем, что у тебя есть.»",
+            "«Маленькие ежедневные победы образуют невероятный годовой результат.»"
+        ];
+
+        // --- GLOBAL APP STATE ---
+        let appState = {
+            currentDay: 1,
+            streakDays: 0,
+            dayMode: 'GREEN', // GREEN, YELLOW, RED
+            habits: JSON.parse(JSON.stringify(DEFAULT_HABITS)),
+            routine: JSON.parse(JSON.stringify(DEFAULT_ROUTINE)),
+            tasks: [
+                { id: 't1', title: 'Сделать домашнее задание по математике', priority: 'high', completed: false },
+                { id: 't2', title: 'Прочитать 15 страниц книги', priority: 'medium', completed: false }
+            ],
+            goals: [
+                { id: 'g1', title: 'Соблюдать режим 30 дней', completed: false },
+                { id: 'g2', title: 'Не пропустить ни одной зарядки', completed: false }
+            ],
+            abstinence: {
+                targetDays: 30,
+                pornStreak: 0,
+                pornBestStreak: 0,
+                mastStreak: 0,
+                mastBestStreak: 0,
+                historyLog: []
+            },
+            history: {
+                modes: { GREEN: 1, YELLOW: 0, RED: 0 },
+                dailyHabitPct: [75, 80, 100, 60, 90, 85, 95] // Past 7 days dummy or real
+            }
+        };
+
+        // Pomodoro Timer State
+        let pomodoroTime = 25 * 60;
+        let pomodoroTimerId = null;
+        let isPomodoroRunning = false;
+
+        // Chart.js Instance
+        let chartInstance = null;
+
+        // --- APP INITIALIZATION ---
+        window.onload = function() {
+            loadStateFromLocalStorage();
+            updateGreeting();
+            renderAllViews();
+            initChart();
+            lucide.createIcons();
+        };
+
+        // --- PERSISTENCE (LOCAL STORAGE) ---
+        function saveStateToLocalStorage() {
+            try {
+                localStorage.setItem('NOV_RESET_STATE_V1', JSON.stringify(appState));
+            } catch (e) {
+                console.error('Save error', e);
+            }
+        }
+
+        function loadStateFromLocalStorage() {
+            const saved = localStorage.getItem('NOV_RESET_STATE_V1');
+            if (saved) {
+                try {
+                    const parsed = JSON.parse(saved);
+                    appState = Object.assign({}, appState, parsed);
+                } catch (e) {
+                    console.error('Parse error', e);
+                }
+            }
+        }
+
+        // --- GREETING & QUOTE LOGIC ---
+        function updateGreeting() {
+            const hour = new Date().getHours();
+            let greeting = 'ДОБРЫЙ ДЕНЬ';
+            if (hour >= 5 && hour < 12) greeting = 'ДОБРОЕ УТРО';
+            else if (hour >= 18 && hour < 23) greeting = 'ДОБРЫЙ ВЕЧЕР';
+            else if (hour >= 23 || hour < 5) greeting = 'ДОБРОЙ НОЧИ';
+            
+            document.getElementById('greeting-time').innerText = greeting;
+
+            // Pick quote based on day
+            const qIndex = (appState.currentDay - 1) % MOTIVATIONAL_QUOTES.length;
+            document.getElementById('quote-display').innerText = MOTIVATIONAL_QUOTES[qIndex];
+        }
+
+        // --- RENDER ALL APP SECTIONS ---
+        function renderAllViews() {
+            renderDayModeUI();
+            renderOverview();
+            renderHabits();
+            renderRoutine();
+            renderTasks();
+            renderGoals();
+            renderAbstinence();
+            renderAnalytics();
+            document.getElementById('setting-day-input').value = appState.currentDay;
+        }
+
+        // --- NAVIGATION BETWEEN TABS ---
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(el => el.classList.add('hidden'));
+            const target = document.getElementById(`tab-${tabId}`);
+            if (target) target.classList.remove('hidden');
+
+            // Update desktop active navigation styles
+            document.querySelectorAll('.nav-btn').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('bg-brand-500/10', 'border-brand-500/20', 'text-white');
+                    btn.classList.remove('text-zinc-400');
+                } else {
+                    btn.classList.remove('bg-brand-500/10', 'border-brand-500/20', 'text-white');
+                    btn.classList.add('text-zinc-400');
+                }
+            });
+
+            // Update mobile navbar styles
+            document.querySelectorAll('.mobile-nav-btn').forEach(btn => {
+                if (btn.getAttribute('data-tab') === tabId) {
+                    btn.classList.add('text-brand-400');
+                    btn.classList.remove('text-zinc-400');
+                } else {
+                    btn.classList.remove('text-brand-400');
+                    btn.classList.add('text-zinc-400');
+                }
+            });
+
+            if (tabId === 'analytics') {
+                updateChartData();
+            }
+
+            lucide.createIcons();
+        }
+
+        // --- DAY MODE SYSTEM (GREEN / YELLOW / RED) ---
+        function setDayMode(mode) {
+            appState.dayMode = mode;
+            appState.history.modes[mode] = (appState.history.modes[mode] || 0) + 1;
+            saveStateToLocalStorage();
+            renderDayModeUI();
+            renderOverview();
+        }
+
+        function renderDayModeUI() {
+            const mode = appState.dayMode;
+            
+            // Badges
+            const dBadge = document.getElementById('desktop-mode-badge');
+            const mText = document.getElementById('mobile-mode-text');
+            const mBadge = document.getElementById('mobile-mode-badge');
+            const banner = document.getElementById('mode-status-banner');
+            const bTitle = document.getElementById('banner-title');
+            const bDesc = document.getElementById('banner-desc');
+            const bIcon = document.getElementById('banner-icon');
+
+            dBadge.innerText = mode;
+            mText.innerText = mode;
+
+            // Reset mode buttons styling in desktop sidebar
+            ['green', 'yellow', 'red'].forEach(m => {
+                const btn = document.getElementById(`btn-mode-${m}`);
+                if (m.toUpperCase() === mode) {
+                    if (m === 'green') btn.className = "py-1.5 text-xs font-semibold rounded text-center transition-all bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                    if (m === 'yellow') btn.className = "py-1.5 text-xs font-semibold rounded text-center transition-all bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                    if (m === 'red') btn.className = "py-1.5 text-xs font-semibold rounded text-center transition-all bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                } else {
+                    btn.className = "py-1.5 text-xs font-semibold rounded text-center transition-all text-zinc-400 hover:text-white";
+                }
+            });
+
+            // Banner Visibility and text
+            if (mode === 'GREEN') {
+                banner.classList.add('hidden');
+                dBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30";
+                mBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 flex items-center space-x-1";
+            } else if (mode === 'YELLOW') {
+                banner.classList.remove('hidden');
+                banner.className = "mb-6 p-4 rounded-xl border border-amber-500/30 bg-amber-500/10 text-amber-200 flex items-center justify-between";
+                bTitle.innerText = "РЕЖИМ YELLOW: Непредсказуемый день / Тревога";
+                bDesc.innerText = "Штрафы за привычки отключены. Выполняй только главное, не перегружай себя.";
+                bIcon.className = "w-6 h-6 shrink-0 text-amber-400";
+                
+                dBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30";
+                mBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase bg-amber-500/20 text-amber-400 border border-amber-500/30 flex items-center space-x-1";
+            } else if (mode === 'RED') {
+                banner.classList.remove('hidden');
+                banner.className = "mb-6 p-4 rounded-xl border border-rose-500/40 bg-rose-500/15 text-rose-100 flex items-center justify-between pulse-red";
+                bTitle.innerText = "РЕЖИМ RED: Чрезвычайная ситуация / Опасность";
+                bDesc.innerText = "Безопасность в приоритете! Следовать инструкциям взрослых. Все привычки заморожены без потери серии.";
+                bIcon.className = "w-6 h-6 shrink-0 text-rose-400";
+
+                dBadge.className = "px-2 py-0.5 rounded text-[10px] font-bold uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30";
+                mBadge.className = "px-3 py-1 rounded-full text-xs font-bold uppercase bg-rose-500/20 text-rose-400 border border-rose-500/30 flex items-center space-x-1";
+            }
+
+            document.getElementById('overview-mode-name').innerText = mode;
+        }
+
+        // --- OVERVIEW TAB RENDERING ---
+        function renderOverview() {
+            document.getElementById('current-day-num').innerText = appState.currentDay;
+            document.getElementById('stat-streak').innerText = appState.streakDays;
+
+            const totalHabits = appState.habits.length;
+            const doneHabits = appState.habits.filter(h => h.completed).length;
+            const habitsPct = totalHabits > 0 ? Math.round((doneHabits / totalHabits) * 100) : 0;
+
+            document.getElementById('stat-habits-pct').innerText = `${habitsPct}%`;
+            document.getElementById('stat-habits-ratio').innerText = `${doneHabits} из ${totalHabits} выполнено`;
+
+            document.getElementById('stat-abst-days').innerText = Math.max(appState.abstinence.pornStreak, appState.abstinence.mastStreak);
+            
+            const doneTasks = appState.tasks.filter(t => t.completed).length;
+            document.getElementById('stat-tasks-done').innerText = doneTasks;
+
+            // Circular progress ring update
+            const circleBar = document.getElementById('circle-progress-bar');
+            circleBar.setAttribute('stroke-dasharray', `${habitsPct}, 100`);
+            document.getElementById('circle-pct-text').innerText = `${habitsPct}%`;
+
+            const statusText = document.getElementById('circle-status-text');
+            if (habitsPct === 100) statusText.innerText = "Отличная работа! День пройден на максимум 🔥";
+            else if (habitsPct >= 50) statusText.innerText = "Больше половины привычек сделано!";
+            else statusText.innerText = "Завершите запланированные привычки";
+
+            // Populate Overview Quick Habits Checklist
+            const overviewContainer = document.getElementById('overview-habits-list');
+            overviewContainer.innerHTML = '';
+            appState.habits.slice(0, 5).forEach(h => {
+                const item = document.createElement('div');
+                item.className = `flex items-center justify-between p-2.5 rounded-xl border transition-all ${h.completed ? 'bg-brand-500/10 border-brand-500/30 text-white' : 'bg-dark-bg border-dark-border text-zinc-400'}`;
+                item.innerHTML = `
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleHabit('${h.id}')">
+                        <div class="w-5 h-5 rounded-md border flex items-center justify-center ${h.completed ? 'bg-brand-500 border-brand-500 text-zinc-950' : 'border-zinc-700'}">
+                            ${h.completed ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
+                        </div>
+                        <span class="text-xs ${h.completed ? 'line-through opacity-80' : ''}">${h.title}</span>
+                    </div>
+                `;
+                overviewContainer.appendChild(item);
+            });
+            lucide.createIcons();
+        }
+
+        // --- HABITS TAB LOGIC ---
+        function renderHabits() {
+            const container = document.getElementById('habits-full-list');
+            container.innerHTML = '';
+
+            appState.habits.forEach(h => {
+                const card = document.createElement('div');
+                card.className = `p-4 rounded-xl border flex items-center justify-between transition-all ${h.completed ? 'bg-brand-500/10 border-brand-500/30' : 'glass-card border-dark-border'}`;
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleHabit('${h.id}')">
+                        <div class="w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${h.completed ? 'bg-brand-500 border-brand-500 text-zinc-950' : 'border-zinc-700 bg-dark-bg'}">
+                            ${h.completed ? '<i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>' : ''}
+                        </div>
+                        <span class="text-sm font-medium ${h.completed ? 'line-through text-zinc-400' : 'text-white'}">${h.title}</span>
+                    </div>
+                    <button onclick="deleteHabit('${h.id}')" class="text-zinc-600 hover:text-rose-400 p-1">
+                        <i data-lucide="trash-2" class="w-4 h-4"></i>
+                    </button>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleHabit(id) {
+            const habit = appState.habits.find(h => h.id === id);
+            if (habit) {
+                habit.completed = !habit.completed;
+                
+                // Re-evaluate daily streak if all habits are complete
+                const allDone = appState.habits.every(h => h.completed);
+                if (allDone) {
+                    appState.streakDays += 1;
+                }
+                
+                saveStateToLocalStorage();
+                renderOverview();
+                renderHabits();
+            }
+        }
+
+        function confirmAddHabit() {
+            const input = document.getElementById('input-habit-name');
+            const title = input.value.trim();
+            if (title) {
+                appState.habits.push({
+                    id: 'h_' + Date.now(),
+                    title: title,
+                    completed: false
+                });
+                saveStateToLocalStorage();
+                renderOverview();
+                renderHabits();
+                input.value = '';
+                closeModal('modal-add-habit');
+            }
+        }
+
+        function deleteHabit(id) {
+            appState.habits = appState.habits.filter(h => h.id !== id);
+            saveStateToLocalStorage();
+            renderOverview();
+            renderHabits();
+        }
+
+        // --- ROUTINE TAB LOGIC ---
+        function renderRoutine() {
+            const container = document.getElementById('routine-timeline');
+            container.innerHTML = '';
+
+            appState.routine.forEach((r, idx) => {
+                const item = document.createElement('div');
+                item.className = "glass-card p-4 rounded-xl border border-dark-border flex flex-col md:flex-row md:items-center justify-between gap-2";
+                item.innerHTML = `
+                    <div class="flex items-start md:items-center space-x-3">
+                        <span class="px-2.5 py-1 rounded-md bg-zinc-800 text-brand-400 font-mono text-xs font-bold border border-zinc-700 shrink-0">${r.time}</span>
+                        <div>
+                            <h4 class="text-sm font-semibold text-white">${r.title}</h4>
+                            <p class="text-xs text-zinc-400 mt-0.5">${r.desc}</p>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(item);
+            });
+        }
+
+        function resetRoutineToDefault() {
+            appState.routine = JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
+            saveStateToLocalStorage();
+            renderRoutine();
+        }
+
+        // --- ABSTINENCE / SELF-CONTROL LOGIC ---
+        function renderAbstinence() {
+            const target = appState.abstinence.targetDays || 30;
+            document.getElementById('abstinence-target-select').value = target;
+
+            // Porn stats
+            const pStreak = appState.abstinence.pornStreak || 0;
+            document.getElementById('porn-streak-count').innerText = pStreak;
+            const pPct = Math.min(100, Math.round((pStreak / target) * 100));
+            document.getElementById('porn-progress-bar').style.width = `${pPct}%`;
+
+            // Masturbation stats
+            const mStreak = appState.abstinence.mastStreak || 0;
+            document.getElementById('mast-streak-count').innerText = mStreak;
+            const mPct = Math.min(100, Math.round((mStreak / target) * 100));
+            document.getElementById('mast-progress-bar').style.width = `${mPct}%`;
+
+            // Render History
+            const historyContainer = document.getElementById('abstinence-history-log');
+            historyContainer.innerHTML = '';
+            if (!appState.abstinence.historyLog || appState.abstinence.historyLog.length === 0) {
+                historyContainer.innerHTML = '<span class="text-zinc-600 italic">Записей пока нет. Начало пути!</span>';
+            } else {
+                appState.abstinence.historyLog.slice().reverse().forEach(log => {
+                    const row = document.createElement('div');
+                    row.className = "p-2 rounded-lg bg-dark-bg border border-dark-border flex items-center justify-between";
+                    row.innerHTML = `
+                        <span>${log.date} — <strong>${log.type === 'porn' ? 'Порно трекер' : 'Воздержание'}</strong></span>
+                        <span class="${log.action === 'success' ? 'text-emerald-400 font-bold' : 'text-zinc-400'}">${log.message}</span>
+                    `;
+                    historyContainer.appendChild(row);
+                });
+            }
+        }
+
+        function updateAbstinenceTarget(val) {
+            appState.abstinence.targetDays = parseInt(val);
+            saveStateToLocalStorage();
+            renderAbstinence();
+        }
+
+        function logAbstinenceSuccess(type) {
+            const todayStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            if (type === 'porn') {
+                appState.abstinence.pornStreak += 1;
+                if (appState.abstinence.pornStreak > appState.abstinence.pornBestStreak) {
+                    appState.abstinence.pornBestStreak = appState.abstinence.pornStreak;
+                }
+                appState.abstinence.historyLog.push({
+                    date: todayStr,
+                    type: 'porn',
+                    action: 'success',
+                    message: `День ${appState.abstinence.pornStreak} пройден успешно`
+                });
+            } else {
+                appState.abstinence.mastStreak += 1;
+                if (appState.abstinence.mastStreak > appState.abstinence.mastBestStreak) {
+                    appState.abstinence.mastBestStreak = appState.abstinence.mastStreak;
+                }
+                appState.abstinence.historyLog.push({
+                    date: todayStr,
+                    type: 'mast',
+                    action: 'success',
+                    message: `День ${appState.abstinence.mastStreak} пройден успешно`
+                });
+            }
+            saveStateToLocalStorage();
+            renderAbstinence();
+            renderOverview();
+        }
+
+        function logAbstinenceRelapse(type) {
+            const todayStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+            if (type === 'porn') {
+                appState.abstinence.pornStreak = 0;
+                appState.abstinence.historyLog.push({
+                    date: todayStr,
+                    type: 'porn',
+                    action: 'relapse',
+                    message: 'Перезапуск серии. Анализ причин и продолжение.'
+                });
+            } else {
+                appState.abstinence.mastStreak = 0;
+                appState.abstinence.historyLog.push({
+                    date: todayStr,
+                    type: 'mast',
+                    action: 'relapse',
+                    message: 'Сброс серии. Без осуждения — двигаемся дальше.'
+                });
+            }
+            saveStateToLocalStorage();
+            renderAbstinence();
+            renderOverview();
+        }
+
+        // --- TASKS & POMODORO LOGIC ---
+        function renderTasks() {
+            const container = document.getElementById('tasks-list-container');
+            container.innerHTML = '';
+
+            appState.tasks.forEach(t => {
+                const priorityColors = {
+                    high: 'text-rose-400 bg-rose-500/10 border-rose-500/30',
+                    medium: 'text-amber-400 bg-amber-500/10 border-amber-500/30',
+                    low: 'text-blue-400 bg-blue-500/10 border-blue-500/30'
+                };
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between transition-all ${t.completed ? 'bg-zinc-900/40 border-dark-border opacity-60' : 'bg-dark-bg border-dark-border'}`;
+                card.innerHTML = `
+                    <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleTask('${t.id}')">
+                        <div class="w-5 h-5 rounded-md border flex items-center justify-center ${t.completed ? 'bg-brand-500 border-brand-500 text-zinc-950' : 'border-zinc-700'}">
+                            ${t.completed ? '<i data-lucide="check" class="w-3.5 h-3.5 stroke-[3]"></i>' : ''}
+                        </div>
+                        <span class="text-xs ${t.completed ? 'line-through text-zinc-500' : 'text-white'}">${t.title}</span>
+                    </div>
+                    <div class="flex items-center space-x-2">
+                        <span class="px-2 py-0.5 rounded text-[10px] font-bold border ${priorityColors[t.priority] || priorityColors.medium}">${t.priority.toUpperCase()}</span>
+                        <button onclick="deleteTask('${t.id}')" class="text-zinc-600 hover:text-rose-400 p-1">
+                            <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
+                        </button>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+
+            document.getElementById('tasks-completed-count').innerText = appState.tasks.filter(t => t.completed).length;
+            lucide.createIcons();
+        }
+
+        function toggleTask(id) {
+            const t = appState.tasks.find(x => x.id === id);
+            if (t) {
+                t.completed = !t.completed;
+                saveStateToLocalStorage();
+                renderTasks();
+                renderOverview();
+            }
+        }
+
+        function confirmAddTask() {
+            const titleInput = document.getElementById('input-task-title');
+            const priorityInput = document.getElementById('input-task-priority');
+            const title = titleInput.value.trim();
+            if (title) {
+                appState.tasks.push({
+                    id: 't_' + Date.now(),
+                    title: title,
+                    priority: priorityInput.value,
+                    completed: false
+                });
+                saveStateToLocalStorage();
+                renderTasks();
+                renderOverview();
+                titleInput.value = '';
+                closeModal('modal-add-task');
+            }
+        }
+
+        function deleteTask(id) {
+            appState.tasks = appState.tasks.filter(t => t.id !== id);
+            saveStateToLocalStorage();
+            renderTasks();
+            renderOverview();
+        }
+
+        // Pomodoro Timer Controls
+        function togglePomodoro() {
+            const btn = document.getElementById('btn-pomodoro-start');
+            if (isPomodoroRunning) {
+                clearInterval(pomodoroTimerId);
+                isPomodoroRunning = false;
+                btn.innerText = "Продолжить";
+                btn.className = "px-6 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-brand-500/20";
+            } else {
+                isPomodoroRunning = true;
+                btn.innerText = "Пауза";
+                btn.className = "px-6 py-2.5 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-amber-500/20";
+                
+                pomodoroTimerId = setInterval(() => {
+                    if (pomodoroTime > 0) {
+                        pomodoroTime--;
+                        updatePomodoroDisplay();
+                    } else {
+                        clearInterval(pomodoroTimerId);
+                        isPomodoroRunning = false;
+                        alert("Pomodoro сессия завершена! Сделайте 5-минутный перерыв.");
+                        resetPomodoro();
+                    }
+                }, 1000);
+            }
+        }
+
+        function resetPomodoro() {
+            clearInterval(pomodoroTimerId);
+            isPomodoroRunning = false;
+            pomodoroTime = 25 * 60;
+            updatePomodoroDisplay();
+            const btn = document.getElementById('btn-pomodoro-start');
+            btn.innerText = "Начать работать";
+            btn.className = "px-6 py-2.5 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-brand-500/20";
+        }
+
+        function updatePomodoroDisplay() {
+            const mins = Math.floor(pomodoroTime / 60);
+            const secs = pomodoroTime % 60;
+            document.getElementById('pomodoro-timer').innerText = 
+                `${mins.toString().padStart(2, '0')}:${secs.toString().padStart(2, '0')}`;
+        }
+
+        // --- GOALS SYSTEM LOGIC ---
+        function renderGoals() {
+            const container = document.getElementById('goals-list');
+            container.innerHTML = '';
+
+            appState.goals.forEach(g => {
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-xl border flex items-center justify-between ${g.completed ? 'bg-brand-500/10 border-brand-500/30' : 'bg-dark-bg border-dark-border'}`;
+                card.innerHTML = `
+                    <div class="flex items-center space-x-2 cursor-pointer" onclick="toggleGoal('${g.id}')">
+                        <div class="w-4 h-4 rounded border flex items-center justify-center ${g.completed ? 'bg-brand-500 border-brand-500 text-zinc-950' : 'border-zinc-700'}">
+                            ${g.completed ? '<i data-lucide="check" class="w-3 h-3 stroke-[3]"></i>' : ''}
+                        </div>
+                        <span class="text-xs font-medium ${g.completed ? 'line-through text-zinc-400' : 'text-zinc-200'}">${g.title}</span>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            lucide.createIcons();
+        }
+
+        function toggleGoal(id) {
+            const g = appState.goals.find(x => x.id === id);
+            if (g) {
+                g.completed = !g.completed;
+                saveStateToLocalStorage();
+                renderGoals();
+            }
+        }
+
+        function confirmAddGoal() {
+            const input = document.getElementById('input-goal-title');
+            const title = input.value.trim();
+            if (title) {
+                appState.goals.push({
+                    id: 'g_' + Date.now(),
+                    title: title,
+                    completed: false
+                });
+                saveStateToLocalStorage();
+                renderGoals();
+                input.value = '';
+                closeModal('modal-add-goal');
+            }
+        }
+
+        // --- ANALYTICS TAB LOGIC & CHART.JS ---
+        function initChart() {
+            const ctx = document.getElementById('habitsChart').getContext('2d');
+            chartInstance = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: ['День 1', 'День 2', 'День 3', 'День 4', 'День 5', 'День 6', 'День 7'],
+                    datasets: [{
+                        label: 'Выполнение привычек %',
+                        data: appState.history.dailyHabitPct,
+                        borderColor: '#10b981',
+                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
+                        borderWidth: 2,
+                        fill: true,
+                        tension: 0.3,
+                        pointBackgroundColor: '#10b981'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false }
+                    },
+                    scales: {
+                        y: {
+                            min: 0,
+                            max: 100,
+                            grid: { color: 'rgba(39, 39, 42, 0.5)' },
+                            ticks: { color: '#71717a', font: { size: 10 } }
+                        },
+                        x: {
+                            grid: { color: 'rgba(39, 39, 42, 0.5)' },
+                            ticks: { color: '#71717a', font: { size: 10 } }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateChartData() {
+            if (chartInstance) {
+                chartInstance.data.datasets[0].data = appState.history.dailyHabitPct;
+                chartInstance.update();
+            }
+        }
+
+        function renderAnalytics() {
+            document.getElementById('stat-count-green').innerText = `${appState.history.modes.GREEN || 0} дн.`;
+            document.getElementById('stat-count-yellow').innerText = `${appState.history.modes.YELLOW || 0} дн.`;
+            document.getElementById('stat-count-red').innerText = `${appState.history.modes.RED || 0} дн.`;
+
+            document.getElementById('best-habit-streak').innerText = `${appState.streakDays} дней`;
+            document.getElementById('best-porn-streak').innerText = `${appState.abstinence.pornBestStreak || 0} дней`;
+            document.getElementById('best-mast-streak').innerText = `${appState.abstinence.mastBestStreak || 0} дней`;
+
+            // Score estimation
+            const habitPct = appState.habits.length > 0 ? (appState.habits.filter(h => h.completed).length / appState.habits.length) * 100 : 0;
+            document.getElementById('overall-score-pct').innerText = `${Math.round(habitPct)}%`;
+        }
+
+        // --- SETTINGS & BACKUP SYSTEM ---
+        function saveDayNumberSetting() {
+            const val = parseInt(document.getElementById('setting-day-input').value);
+            if (val >= 1 && val <= 30) {
+                appState.currentDay = val;
+                saveStateToLocalStorage();
+                renderOverview();
+                alert(`Установлен День ${val}`);
+            }
+        }
+
+        function exportAppData() {
+            const dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(appState, null, 2));
+            const dlAnchorElem = document.createElement('a');
+            dlAnchorElem.setAttribute("href", dataStr);
+            dlAnchorElem.setAttribute("download", `NOVEMBER_RESET_BACKUP_DAY_${appState.currentDay}.json`);
+            document.body.appendChild(dlAnchorElem);
+            dlAnchorElem.click();
+            dlAnchorElem.remove();
+        }
+
+        function importAppData(event) {
+            const fileReader = new FileReader();
+            fileReader.onload = function(e) {
+                try {
+                    const importedState = JSON.parse(e.target.result);
+                    appState = Object.assign({}, appState, importedState);
+                    saveStateToLocalStorage();
+                    renderAllViews();
+                    alert("Данные успешно импортированы!");
+                } catch (err) {
+                    alert("Ошибка чтения JSON файла.");
+                }
+            };
+            if (event.target.files[0]) {
+                fileReader.readAsText(event.target.files[0]);
+            }
+        }
+
+        function resetAllAppData() {
+            if (confirm("Вы уверены, что хотите сбросить весь прогресс? Это действие невозможно отменить.")) {
+                localStorage.removeItem('NOV_RESET_STATE_V1');
+                location.reload();
+            }
+        }
+
+        // --- MODAL UTILITIES ---
+        function openAddHabitModal() { document.getElementById('modal-add-habit').classList.remove('hidden'); }
+        function openAddTaskModal() { document.getElementById('modal-add-task').classList.remove('hidden'); }
+        function openAddGoalModal() { document.getElementById('modal-add-goal').classList.remove('hidden'); }
+        function openMobileModeModal() { document.getElementById('modal-mobile-mode').classList.remove('hidden'); }
+        
+        function closeModal(id) { document.getElementById(id).classList.add('hidden'); }
+    </script>
+</body>
+</html>
