@@ -222,10 +222,16 @@
                     <h2 class="text-2xl md:text-3xl font-extrabold mt-1 text-white">День <span id="current-day-num">1</span> <span class="text-zinc-500 text-lg font-normal">/ 30</span></h2>
                     <p id="quote-display" class="text-sm text-zinc-400 mt-2 max-w-xl italic">«Дисциплина — это выбор между тем, чего ты хочешь прямо сейчас, и тем, чего ты хочешь больше всего.»</p>
                 </div>
-                <button onclick="switchTab('habits')" class="self-start md:self-center px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-brand-500/20 flex items-center space-x-2 shrink-0">
-                    <i data-lucide="check-circle-2" class="w-4 h-4"></i>
-                    <span>Отметить сегодня</span>
-                </button>
+                <div class="flex flex-col sm:flex-row gap-2 self-start md:self-center shrink-0">
+                    <button onclick="switchTab('habits')" class="px-5 py-3 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-sm transition-all shadow-lg shadow-brand-500/20 flex items-center justify-center space-x-2">
+                        <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                        <span>Отметить сегодня</span>
+                    </button>
+                    <button onclick="finishCurrentDay()" class="px-4 py-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-200 font-semibold text-sm transition-all border border-zinc-700 flex items-center justify-center space-x-2">
+                        <i data-lucide="arrow-right-circle" class="w-4 h-4 text-brand-400"></i>
+                        <span>Завершить день</span>
+                    </button>
+                </div>
             </div>
 
             <!-- Key Metrics Grid -->
@@ -1435,6 +1441,27 @@
                 saveStateToLocalStorage();
                 renderOverview();
                 alert(`Установлен День ${val}`);
+            }
+        }
+
+        function finishCurrentDay() {
+            const totalHabits = appState.habits.length;
+            const doneHabits = appState.habits.filter(h => h.completed).length;
+            const habitsPct = totalHabits > 0 ? Math.round((doneHabits / totalHabits) * 100) : 0;
+
+            // Save history of current day habits percentage
+            if (!appState.history.dailyHabitPct) appState.history.dailyHabitPct = [];
+            appState.history.dailyHabitPct.push(habitsPct);
+
+            if (appState.currentDay < 30) {
+                appState.currentDay += 1;
+                // Reset daily habits checklist for the new day
+                appState.habits.forEach(h => h.completed = false);
+                saveStateToLocalStorage();
+                renderAllViews();
+                alert(`Отличная работа! Переходим к Дню ${appState.currentDay} 💪`);
+            } else {
+                alert("🎉 ПОЗДРАВЛЯЕМ! Вы успешно завершили 30-дневный челлендж NOVEMBER RESET!");
             }
         }
 
