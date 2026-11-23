@@ -341,9 +341,15 @@
             <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
                 <div>
                     <h2 class="text-2xl font-bold text-white">Мой распорядок дня</h2>
-                    <p class="text-xs text-zinc-400 mt-1">Ориентировочный график школьника с учётом отдыха и учебы. Это ориентиры, а не жесткие рамки.</p>
+                    <p class="text-xs text-zinc-400 mt-1">Ориентировочный график школьника с учётом отдыха и учебы. Нажми на карандаш, чтобы изменить любой блок.</p>
                 </div>
-                <button onclick="resetRoutineToDefault()" class="self-start px-3 py-1.5 rounded-lg border border-zinc-700 hover:bg-zinc-800 text-xs text-zinc-300">Сбросить на дефолт</button>
+                <div class="flex items-center space-x-2 self-start">
+                    <button onclick="openRoutineModal()" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-xs flex items-center space-x-1">
+                        <i data-lucide="plus" class="w-4 h-4"></i>
+                        <span>Добавить блок</span>
+                    </button>
+                    <button onclick="resetRoutineToDefault()" class="px-3 py-2 rounded-xl border border-zinc-700 hover:bg-zinc-800 text-xs text-zinc-300">Сбросить</button>
+                </div>
             </div>
 
             <div id="routine-timeline" class="space-y-3">
@@ -379,86 +385,55 @@
                             <i data-lucide="flame" class="w-3.5 h-3.5"></i>
                             <span>СЕКЦИЯ САМОКОНТРОЛЯ</span>
                         </div>
-                        <h2 class="text-2xl md:text-3xl font-extrabold text-white">Отказ от деструктивных привычек</h2>
+                        <h2 class="text-2xl md:text-3xl font-extrabold text-white">Трекер воздержания</h2>
                         <p class="text-xs text-zinc-400 mt-1 max-w-xl">Раздел основан на личной свободе и тренировке воли. Срыв — это не поражение, а лишь точка пересборки. Без стыжения.</p>
                     </div>
                     <!-- Target Selector -->
                     <div class="bg-dark-bg p-3 rounded-xl border border-dark-border flex flex-col space-y-1">
                         <label class="text-[10px] uppercase font-bold text-zinc-500">Текущая цель</label>
                         <select id="abstinence-target-select" onchange="updateAbstinenceTarget(this.value)" class="bg-zinc-900 border border-zinc-700 text-white text-xs rounded-lg px-2 py-1 focus:outline-none focus:border-brand-500">
-                            <option value="7">7 Дней (Новичок)</option>
-                            <option value="14">14 Дней (Продвинутый)</option>
-                            <option value="30">30 Дней (Разгрузка)</option>
-                            <option value="60">60 Дней (Мастер)</option>
-                            <option value="90">90 Дней (Полный Перезапуск)</option>
+                            <option value="7">7 Дней (Старт)</option>
+                            <option value="14">14 Дней (Уверенность)</option>
+                            <option value="30">30 Дней (Перезагрузка)</option>
+                            <option value="60">60 Дней (Железная воля)</option>
+                            <option value="90">90 Дней (Полный контроль)</option>
                         </select>
                     </div>
                 </div>
             </div>
 
-            <!-- Dual Trackers Grid (Pornography / Masturbation) -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <!-- Tracker 1: Pornography Abstinence -->
-                <div class="glass-card p-6 rounded-2xl border border-dark-border flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-2">
-                                <i data-lucide="eye-off" class="w-5 h-5 text-indigo-400"></i>
-                                <h3 class="font-bold text-white">Отказ от порнографического контента</h3>
-                            </div>
+            <!-- Single Unified Abstinence Tracker Card -->
+            <div class="glass-card p-6 md:p-8 rounded-2xl border border-dark-border">
+                <div class="flex flex-col md:flex-row items-center justify-between gap-6">
+                    <div class="text-center md:text-left">
+                        <span class="text-xs uppercase tracking-wider text-amber-400 font-bold">Текущая серия чистоты</span>
+                        <div class="flex items-baseline justify-center md:justify-start space-x-3 mt-1">
+                            <span class="text-6xl md:text-7xl font-black text-white" id="abst-streak-count">0</span>
+                            <span class="text-sm text-zinc-400 font-medium" id="abst-target-label">из 30 дней</span>
                         </div>
-                        
-                        <div class="text-center py-6">
-                            <span class="text-5xl font-black text-white" id="porn-streak-count">0</span>
-                            <span class="text-xs text-zinc-400 block mt-1">дней чистой психики</span>
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-zinc-800 rounded-full h-2 mt-4 overflow-hidden">
-                                <div id="porn-progress-bar" class="bg-indigo-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
+                        <p class="text-xs text-zinc-500 mt-2">Лучший рекорд: <strong id="abst-best-inline" class="text-zinc-300">0 дней</strong></p>
                     </div>
 
-                    <div class="grid grid-cols-2 gap-2 mt-4">
-                        <button onclick="logAbstinenceSuccess('porn')" class="py-2.5 px-3 rounded-xl bg-indigo-600/20 hover:bg-indigo-600/30 text-indigo-300 font-bold text-xs border border-indigo-500/30 flex items-center justify-center space-x-1">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                            <span>Сегодня чисто</span>
+                    <div class="flex flex-col sm:flex-row gap-3 w-full md:w-auto">
+                        <button onclick="logAbstinenceSuccess()" class="py-3.5 px-6 rounded-xl bg-amber-500 hover:bg-amber-600 text-zinc-950 font-extrabold text-sm transition-all shadow-lg shadow-amber-500/20 flex items-center justify-center space-x-2">
+                            <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            <span>Сегодня удержался</span>
                         </button>
-                        <button onclick="logAbstinenceRelapse('porn')" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-medium text-xs flex items-center justify-center space-x-1">
+                        <button onclick="logAbstinenceRelapse()" class="py-3.5 px-5 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-300 font-semibold text-sm border border-zinc-700 flex items-center justify-center space-x-2">
                             <i data-lucide="refresh-cw" class="w-4 h-4"></i>
                             <span>Отметить срыв</span>
                         </button>
                     </div>
                 </div>
 
-                <!-- Tracker 2: Masturbation Abstinence / Retention -->
-                <div class="glass-card p-6 rounded-2xl border border-dark-border flex flex-col justify-between">
-                    <div>
-                        <div class="flex items-center justify-between mb-4">
-                            <div class="flex items-center space-x-2">
-                                <i data-lucide="zap" class="w-5 h-5 text-amber-400"></i>
-                                <h3 class="font-bold text-white">Воздержание (Перенаправление энергии)</h3>
-                            </div>
-                        </div>
-                        
-                        <div class="text-center py-6">
-                            <span class="text-5xl font-black text-white" id="mast-streak-count">0</span>
-                            <span class="text-xs text-zinc-400 block mt-1">дней контроля</span>
-                            <!-- Progress Bar -->
-                            <div class="w-full bg-zinc-800 rounded-full h-2 mt-4 overflow-hidden">
-                                <div id="mast-progress-bar" class="bg-amber-500 h-full transition-all duration-500" style="width: 0%"></div>
-                            </div>
-                        </div>
+                <!-- Progress Bar -->
+                <div class="mt-6">
+                    <div class="flex justify-between text-xs text-zinc-400 mb-1.5">
+                        <span>Прогресс до цели</span>
+                        <span id="abst-progress-pct" class="font-bold text-amber-400">0%</span>
                     </div>
-
-                    <div class="grid grid-cols-2 gap-2 mt-4">
-                        <button onclick="logAbstinenceSuccess('mast')" class="py-2.5 px-3 rounded-xl bg-amber-500/20 hover:bg-amber-500/30 text-amber-300 font-bold text-xs border border-amber-500/30 flex items-center justify-center space-x-1">
-                            <i data-lucide="check" class="w-4 h-4"></i>
-                            <span>Удержался сегодня</span>
-                        </button>
-                        <button onclick="logAbstinenceRelapse('mast')" class="py-2.5 px-3 rounded-xl bg-zinc-800 hover:bg-zinc-700 text-zinc-400 font-medium text-xs flex items-center justify-center space-x-1">
-                            <i data-lucide="refresh-cw" class="w-4 h-4"></i>
-                            <span>Сбросить серию</span>
-                        </button>
+                    <div class="w-full bg-zinc-800/90 rounded-full h-3 overflow-hidden border border-zinc-700/50">
+                        <div id="abst-progress-bar" class="bg-gradient-to-r from-amber-500 to-emerald-400 h-full transition-all duration-500" style="width: 0%"></div>
                     </div>
                 </div>
             </div>
@@ -558,12 +533,42 @@
         <section id="tab-analytics" class="tab-content space-y-6 hidden">
             <div>
                 <h2 class="text-2xl font-bold text-white">Аналитика и Статистика</h2>
-                <p class="text-xs text-zinc-400 mt-1">Отслеживай свой динамический прогресс за 7 и 30 дней.</p>
+                <p class="text-xs text-zinc-400 mt-1">Реальная статистика твоих завершённых дней и текущего прогресса.</p>
+            </div>
+
+            <!-- Real Percentage Summary Cards -->
+            <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="glass-card p-4 rounded-xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block">Среднее за 7 дней</span>
+                    <div class="text-2xl md:text-3xl font-black text-brand-400 mt-2" id="stat-avg-7d">0%</div>
+                    <span class="text-[10px] text-zinc-500">выполнение привычек</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block">Среднее за 30 дней</span>
+                    <div class="text-2xl md:text-3xl font-black text-white mt-2" id="stat-avg-30d">0%</div>
+                    <span class="text-[10px] text-zinc-500">общий рейтинг челленджа</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block">Продуктивных дней</span>
+                    <div class="text-2xl md:text-3xl font-black text-emerald-400 mt-2" id="stat-productive-days">0</div>
+                    <span class="text-[10px] text-zinc-500">дней с результатом ≥ 70%</span>
+                </div>
+                <div class="glass-card p-4 rounded-xl border border-dark-border">
+                    <span class="text-xs text-zinc-400 block">Завершено задач</span>
+                    <div class="text-2xl md:text-3xl font-black text-blue-400 mt-2" id="stat-total-tasks">0</div>
+                    <span class="text-[10px] text-zinc-500">из <span id="stat-all-tasks">0</span> созданных</span>
+                </div>
             </div>
 
             <!-- Chart Container -->
             <div class="glass-card p-6 rounded-2xl border border-dark-border">
-                <h3 class="text-sm font-bold text-zinc-300 mb-4">Выполнение привычек (Проценты за 7 дней)</h3>
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2 mb-4">
+                    <h3 class="text-sm font-bold text-zinc-300">Динамика выполнения привычек (%)</h3>
+                    <div class="flex space-x-1 bg-dark-bg p-1 rounded-lg border border-dark-border self-start">
+                        <button onclick="setChartRange(7)" id="btn-chart-7" class="px-2.5 py-1 text-xs font-semibold rounded bg-brand-500/20 text-brand-400">7 дней</button>
+                        <button onclick="setChartRange(30)" id="btn-chart-30" class="px-2.5 py-1 text-xs font-semibold rounded text-zinc-400 hover:text-white">30 дней</button>
+                    </div>
+                </div>
                 <div class="h-64 w-full">
                     <canvas id="habitsChart"></canvas>
                 </div>
@@ -597,21 +602,21 @@
                             <span id="best-habit-streak" class="font-bold text-brand-400">0 дней</span>
                         </div>
                         <div class="flex justify-between items-center">
-                            <span>Рекорд чистых дней (Порно):</span>
-                            <span id="best-porn-streak" class="font-bold text-indigo-400">0 дней</span>
+                            <span>Текущее воздержание:</span>
+                            <span id="current-abst-stat" class="font-bold text-amber-400">0 дней</span>
                         </div>
                         <div class="flex justify-between items-center">
                             <span>Рекорд воздержания:</span>
-                            <span id="best-mast-streak" class="font-bold text-amber-400">0 дней</span>
+                            <span id="best-abst-streak" class="font-bold text-emerald-400">0 дней</span>
                         </div>
                     </div>
                 </div>
 
                 <div class="glass-card p-5 rounded-2xl border border-dark-border">
-                    <span class="text-xs text-zinc-400 block font-medium">Общий показатель фокуса</span>
+                    <span class="text-xs text-zinc-400 block font-medium">Сегодняшний показатель</span>
                     <div class="mt-2">
                         <div class="text-3xl font-black text-white" id="overall-score-pct">0%</div>
-                        <p class="text-[11px] text-zinc-500 mt-1">Основано на соотношении успешных дней к общему числу прошедших дней челленджа.</p>
+                        <p class="text-[11px] text-zinc-500 mt-1">Текущий прогресс за День <span id="analytics-day-num">1</span>. Нажми «Завершить день» на главной, чтобы зафиксировать результат в историю.</p>
                     </div>
                 </div>
             </div>
@@ -746,6 +751,50 @@
         </div>
     </div>
 
+    <!-- MODAL 5: EDIT / ADD ROUTINE ITEM -->
+    <div id="modal-routine" class="fixed inset-0 z-50 bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-md rounded-2xl p-6 space-y-4">
+            <div class="flex justify-between items-center">
+                <h3 id="modal-routine-title" class="font-bold text-base text-white">Редактировать график</h3>
+                <button onclick="closeModal('modal-routine')" class="text-zinc-500 hover:text-white"><i data-lucide="x" class="w-5 h-5"></i></button>
+            </div>
+            <input type="hidden" id="input-routine-id">
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Время / Ориентир</label>
+                <input type="text" id="input-routine-time" placeholder="Например: 16:30–18:00" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Название занятия</label>
+                <input type="text" id="input-routine-name" placeholder="Например: Тренировка / Английский" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            </div>
+            <div>
+                <label class="text-xs text-zinc-400 block mb-1">Краткое описание</label>
+                <input type="text" id="input-routine-desc" placeholder="Необязательно" class="w-full bg-dark-bg border border-zinc-700 rounded-xl px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-500">
+            </div>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModal('modal-routine')" class="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white">Отмена</button>
+                <button onclick="saveRoutineItem()" class="px-4 py-2 text-xs font-bold bg-brand-500 hover:bg-brand-600 text-zinc-950 rounded-xl">Сохранить</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- TOAST NOTIFICATION & CONFIRMATION MODAL -->
+    <div id="toast-box" class="fixed top-4 right-4 z-[60] hidden max-w-sm bg-dark-card border border-brand-500/40 text-white px-4 py-3 rounded-xl shadow-2xl flex items-center space-x-3 transition-all">
+        <i data-lucide="info" class="w-5 h-5 text-brand-400 shrink-0"></i>
+        <span id="toast-message" class="text-xs font-medium"></span>
+    </div>
+
+    <div id="modal-confirm" class="fixed inset-0 z-[60] bg-black/80 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-dark-card border border-dark-border w-full max-w-sm rounded-2xl p-6 space-y-4">
+            <h3 class="font-bold text-base text-white">Подтверждение</h3>
+            <p id="confirm-message" class="text-xs text-zinc-400"></p>
+            <div class="flex justify-end space-x-2 pt-2">
+                <button onclick="closeModal('modal-confirm')" class="px-4 py-2 text-xs font-semibold text-zinc-400 hover:text-white">Отмена</button>
+                <button id="confirm-yes-btn" class="px-4 py-2 text-xs font-bold bg-rose-600 hover:bg-rose-500 text-white rounded-xl">Подтвердить</button>
+            </div>
+        </div>
+    </div>
+
     <!-- JAVASCRIPT APP APPLICATION LOGIC -->
     <script>
         // --- DEFAULT DATA & INITIAL STATE ---
@@ -788,6 +837,7 @@
         let appState = {
             currentDay: 1,
             streakDays: 0,
+            bestHabitStreak: 0,
             dayMode: 'GREEN', // GREEN, YELLOW, RED
             habits: JSON.parse(JSON.stringify(DEFAULT_HABITS)),
             routine: JSON.parse(JSON.stringify(DEFAULT_ROUTINE)),
@@ -801,17 +851,17 @@
             ],
             abstinence: {
                 targetDays: 30,
-                pornStreak: 0,
-                pornBestStreak: 0,
-                mastStreak: 0,
-                mastBestStreak: 0,
+                streak: 0,
+                bestStreak: 0,
                 historyLog: []
             },
             history: {
                 modes: { GREEN: 1, YELLOW: 0, RED: 0 },
-                dailyHabitPct: [75, 80, 100, 60, 90, 85, 95] // Past 7 days dummy or real
+                completedDays: [] // Array of { day: number, pct: number, mode: string }
             }
         };
+
+        let currentChartRange = 7;
 
         // Pomodoro Timer State
         let pomodoroTime = 25 * 60;
@@ -845,10 +895,44 @@
                 try {
                     const parsed = JSON.parse(saved);
                     appState = Object.assign({}, appState, parsed);
+                    // Migrate old dual abstinence data if present
+                    if (parsed.abstinence && parsed.abstinence.streak === undefined) {
+                        const maxStreak = Math.max(parsed.abstinence.pornStreak || 0, parsed.abstinence.mastStreak || 0);
+                        const maxBest = Math.max(parsed.abstinence.pornBestStreak || 0, parsed.abstinence.mastBestStreak || 0);
+                        appState.abstinence = {
+                            targetDays: parsed.abstinence.targetDays || 30,
+                            streak: maxStreak,
+                            bestStreak: maxBest,
+                            historyLog: parsed.abstinence.historyLog || []
+                        };
+                    }
+                    if (!appState.history.completedDays) {
+                        appState.history.completedDays = [];
+                    }
                 } catch (e) {
                     console.error('Parse error', e);
                 }
             }
+        }
+
+        function showToast(msg) {
+            const box = document.getElementById('toast-box');
+            document.getElementById('toast-message').innerText = msg;
+            box.classList.remove('hidden');
+            clearTimeout(window._toastTimeout);
+            window._toastTimeout = setTimeout(() => {
+                box.classList.add('hidden');
+            }, 3500);
+        }
+
+        function askConfirm(msg, onConfirm) {
+            document.getElementById('confirm-message').innerText = msg;
+            const yesBtn = document.getElementById('confirm-yes-btn');
+            yesBtn.onclick = function() {
+                closeModal('modal-confirm');
+                onConfirm();
+            };
+            document.getElementById('modal-confirm').classList.remove('hidden');
         }
 
         // --- GREETING & QUOTE LOGIC ---
@@ -990,7 +1074,7 @@
             document.getElementById('stat-habits-pct').innerText = `${habitsPct}%`;
             document.getElementById('stat-habits-ratio').innerText = `${doneHabits} из ${totalHabits} выполнено`;
 
-            document.getElementById('stat-abst-days').innerText = Math.max(appState.abstinence.pornStreak, appState.abstinence.mastStreak);
+            document.getElementById('stat-abst-days').innerText = appState.abstinence.streak || 0;
             
             const doneTasks = appState.tasks.filter(t => t.completed).length;
             document.getElementById('stat-tasks-done').innerText = doneTasks;
@@ -1052,16 +1136,10 @@
             const habit = appState.habits.find(h => h.id === id);
             if (habit) {
                 habit.completed = !habit.completed;
-                
-                // Re-evaluate daily streak if all habits are complete
-                const allDone = appState.habits.every(h => h.completed);
-                if (allDone) {
-                    appState.streakDays += 1;
-                }
-                
                 saveStateToLocalStorage();
                 renderOverview();
                 renderHabits();
+                renderAnalytics();
             }
         }
 
@@ -1094,26 +1172,104 @@
             const container = document.getElementById('routine-timeline');
             container.innerHTML = '';
 
-            appState.routine.forEach((r, idx) => {
+            appState.routine.forEach((r) => {
                 const item = document.createElement('div');
-                item.className = "glass-card p-4 rounded-xl border border-dark-border flex flex-col md:flex-row md:items-center justify-between gap-2";
+                item.className = "glass-card p-4 rounded-xl border border-dark-border flex items-start md:items-center justify-between gap-3 group";
                 item.innerHTML = `
                     <div class="flex items-start md:items-center space-x-3">
                         <span class="px-2.5 py-1 rounded-md bg-zinc-800 text-brand-400 font-mono text-xs font-bold border border-zinc-700 shrink-0">${r.time}</span>
                         <div>
                             <h4 class="text-sm font-semibold text-white">${r.title}</h4>
-                            <p class="text-xs text-zinc-400 mt-0.5">${r.desc}</p>
+                            ${r.desc ? `<p class="text-xs text-zinc-400 mt-0.5">${r.desc}</p>` : ''}
                         </div>
+                    </div>
+                    <div class="flex items-center space-x-1 shrink-0">
+                        <button onclick="openRoutineModal('${r.id}')" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors" title="Редактировать">
+                            <i data-lucide="pencil" class="w-4 h-4"></i>
+                        </button>
+                        <button onclick="deleteRoutineItem('${r.id}')" class="p-1.5 rounded-lg text-zinc-500 hover:text-rose-400 hover:bg-zinc-800 transition-colors" title="Удалить">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i>
+                        </button>
                     </div>
                 `;
                 container.appendChild(item);
             });
+            lucide.createIcons();
+        }
+
+        function openRoutineModal(id = null) {
+            const modalTitle = document.getElementById('modal-routine-title');
+            const idInput = document.getElementById('input-routine-id');
+            const timeInput = document.getElementById('input-routine-time');
+            const nameInput = document.getElementById('input-routine-name');
+            const descInput = document.getElementById('input-routine-desc');
+
+            if (id) {
+                const item = appState.routine.find(r => r.id === id);
+                if (!item) return;
+                modalTitle.innerText = 'Редактировать пункт';
+                idInput.value = item.id;
+                timeInput.value = item.time;
+                nameInput.value = item.title;
+                descInput.value = item.desc || '';
+            } else {
+                modalTitle.innerText = 'Добавить пункт в график';
+                idInput.value = '';
+                timeInput.value = '';
+                nameInput.value = '';
+                descInput.value = '';
+            }
+            document.getElementById('modal-routine').classList.remove('hidden');
+        }
+
+        function saveRoutineItem() {
+            const id = document.getElementById('input-routine-id').value;
+            const time = document.getElementById('input-routine-time').value.trim();
+            const title = document.getElementById('input-routine-name').value.trim();
+            const desc = document.getElementById('input-routine-desc').value.trim();
+
+            if (!time || !title) {
+                showToast('Укажи время и название занятия');
+                return;
+            }
+
+            if (id) {
+                const item = appState.routine.find(r => r.id === id);
+                if (item) {
+                    item.time = time;
+                    item.title = title;
+                    item.desc = desc;
+                }
+                showToast('Пункт графика обновлён');
+            } else {
+                appState.routine.push({
+                    id: 'r_' + Date.now(),
+                    time: time,
+                    title: title,
+                    desc: desc
+                });
+                showToast('Добавлено в график');
+            }
+
+            saveStateToLocalStorage();
+            renderRoutine();
+            closeModal('modal-routine');
+        }
+
+        function deleteRoutineItem(id) {
+            appState.routine = appState.routine.filter(r => r.id !== id);
+            saveStateToLocalStorage();
+            renderRoutine();
+            showToast('Пункт удалён из графика');
         }
 
         function resetRoutineToDefault() {
-            appState.routine = JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
-            saveStateToLocalStorage();
-            renderRoutine();
+            askConfirm('Вернуть стандартное расписание школьника?', () => {
+                appState.routine = JSON.parse(JSON.stringify(DEFAULT_ROUTINE));
+                saveStateToLocalStorage();
+                renderRoutine();
+                showToast('Расписание восстановлено');
+            });
         }
 
         // --- ABSTINENCE / SELF-CONTROL LOGIC ---
@@ -1121,17 +1277,15 @@
             const target = appState.abstinence.targetDays || 30;
             document.getElementById('abstinence-target-select').value = target;
 
-            // Porn stats
-            const pStreak = appState.abstinence.pornStreak || 0;
-            document.getElementById('porn-streak-count').innerText = pStreak;
-            const pPct = Math.min(100, Math.round((pStreak / target) * 100));
-            document.getElementById('porn-progress-bar').style.width = `${pPct}%`;
+            const streak = appState.abstinence.streak || 0;
+            const best = appState.abstinence.bestStreak || 0;
+            document.getElementById('abst-streak-count').innerText = streak;
+            document.getElementById('abst-target-label').innerText = `из ${target} дней`;
+            document.getElementById('abst-best-inline').innerText = `${best} дн.`;
 
-            // Masturbation stats
-            const mStreak = appState.abstinence.mastStreak || 0;
-            document.getElementById('mast-streak-count').innerText = mStreak;
-            const mPct = Math.min(100, Math.round((mStreak / target) * 100));
-            document.getElementById('mast-progress-bar').style.width = `${mPct}%`;
+            const pct = Math.min(100, Math.round((streak / target) * 100));
+            document.getElementById('abst-progress-pct').innerText = `${pct}%`;
+            document.getElementById('abst-progress-bar').style.width = `${pct}%`;
 
             // Render History
             const historyContainer = document.getElementById('abstinence-history-log');
@@ -1141,9 +1295,9 @@
             } else {
                 appState.abstinence.historyLog.slice().reverse().forEach(log => {
                     const row = document.createElement('div');
-                    row.className = "p-2 rounded-lg bg-dark-bg border border-dark-border flex items-center justify-between";
+                    row.className = "p-2.5 rounded-lg bg-dark-bg border border-dark-border flex items-center justify-between";
                     row.innerHTML = `
-                        <span>${log.date} — <strong>${log.type === 'porn' ? 'Порно трекер' : 'Воздержание'}</strong></span>
+                        <span class="text-zinc-300 font-medium">${log.date}</span>
                         <span class="${log.action === 'success' ? 'text-emerald-400 font-bold' : 'text-zinc-400'}">${log.message}</span>
                     `;
                     historyContainer.appendChild(row);
@@ -1157,58 +1311,40 @@
             renderAbstinence();
         }
 
-        function logAbstinenceSuccess(type) {
+        function logAbstinenceSuccess() {
             const todayStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-            if (type === 'porn') {
-                appState.abstinence.pornStreak += 1;
-                if (appState.abstinence.pornStreak > appState.abstinence.pornBestStreak) {
-                    appState.abstinence.pornBestStreak = appState.abstinence.pornStreak;
-                }
-                appState.abstinence.historyLog.push({
-                    date: todayStr,
-                    type: 'porn',
-                    action: 'success',
-                    message: `День ${appState.abstinence.pornStreak} пройден успешно`
-                });
-            } else {
-                appState.abstinence.mastStreak += 1;
-                if (appState.abstinence.mastStreak > appState.abstinence.mastBestStreak) {
-                    appState.abstinence.mastBestStreak = appState.abstinence.mastStreak;
-                }
-                appState.abstinence.historyLog.push({
-                    date: todayStr,
-                    type: 'mast',
-                    action: 'success',
-                    message: `День ${appState.abstinence.mastStreak} пройден успешно`
-                });
+            appState.abstinence.streak = (appState.abstinence.streak || 0) + 1;
+            if (appState.abstinence.streak > (appState.abstinence.bestStreak || 0)) {
+                appState.abstinence.bestStreak = appState.abstinence.streak;
             }
+            appState.abstinence.historyLog.push({
+                date: todayStr,
+                action: 'success',
+                message: `День ${appState.abstinence.streak} — удержался`
+            });
             saveStateToLocalStorage();
             renderAbstinence();
             renderOverview();
+            renderAnalytics();
+            showToast(`Отлично! Серия воздержания: ${appState.abstinence.streak} дн.`);
         }
 
-        function logAbstinenceRelapse(type) {
-            const todayStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
-            if (type === 'porn') {
-                appState.abstinence.pornStreak = 0;
+        function logAbstinenceRelapse() {
+            askConfirm('Сбросить текущую серию воздержания на 0? Это просто статистика для анализа.', () => {
+                const todayStr = new Date().toLocaleDateString('ru-RU', { day: 'numeric', month: 'short' });
+                const prev = appState.abstinence.streak || 0;
+                appState.abstinence.streak = 0;
                 appState.abstinence.historyLog.push({
                     date: todayStr,
-                    type: 'porn',
                     action: 'relapse',
-                    message: 'Перезапуск серии. Анализ причин и продолжение.'
+                    message: `Перезапуск (предыдущая серия: ${prev} дн.)`
                 });
-            } else {
-                appState.abstinence.mastStreak = 0;
-                appState.abstinence.historyLog.push({
-                    date: todayStr,
-                    type: 'mast',
-                    action: 'relapse',
-                    message: 'Сброс серии. Без осуждения — двигаемся дальше.'
-                });
-            }
-            saveStateToLocalStorage();
-            renderAbstinence();
-            renderOverview();
+                saveStateToLocalStorage();
+                renderAbstinence();
+                renderOverview();
+                renderAnalytics();
+                showToast('Серия перезапущена. Двигаемся дальше без лишнего груза.');
+            });
         }
 
         // --- TASKS & POMODORO LOGIC ---
@@ -1302,7 +1438,7 @@
                     } else {
                         clearInterval(pomodoroTimerId);
                         isPomodoroRunning = false;
-                        alert("Pomodoro сессия завершена! Сделайте 5-минутный перерыв.");
+                        showToast("Pomodoro сессия завершена! Сделай 5-минутный перерыв.");
                         resetPomodoro();
                     }
                 }, 1000);
@@ -1373,64 +1509,128 @@
         }
 
         // --- ANALYTICS TAB LOGIC & CHART.JS ---
+        function getAllProgressRecords() {
+            const records = [...(appState.history.completedDays || [])];
+            const totalHabits = appState.habits.length;
+            const doneHabits = appState.habits.filter(h => h.completed).length;
+            const currentPct = totalHabits > 0 ? Math.round((doneHabits / totalHabits) * 100) : 0;
+
+            // Include or update current active day so the chart & stats reflect live progress
+            const existingIdx = records.findIndex(r => r.day === appState.currentDay);
+            if (existingIdx >= 0) {
+                records[existingIdx] = { day: appState.currentDay, pct: currentPct, mode: appState.dayMode };
+            } else {
+                records.push({ day: appState.currentDay, pct: currentPct, mode: appState.dayMode });
+            }
+            return records.sort((a, b) => a.day - b.day);
+        }
+
+        function setChartRange(days) {
+            currentChartRange = days;
+            const btn7 = document.getElementById('btn-chart-7');
+            const btn30 = document.getElementById('btn-chart-30');
+            if (days === 7) {
+                btn7.className = 'px-2.5 py-1 text-xs font-semibold rounded bg-brand-500/20 text-brand-400';
+                btn30.className = 'px-2.5 py-1 text-xs font-semibold rounded text-zinc-400 hover:text-white';
+            } else {
+                btn30.className = 'px-2.5 py-1 text-xs font-semibold rounded bg-brand-500/20 text-brand-400';
+                btn7.className = 'px-2.5 py-1 text-xs font-semibold rounded text-zinc-400 hover:text-white';
+            }
+            updateChartData();
+        }
+
         function initChart() {
             const ctx = document.getElementById('habitsChart').getContext('2d');
             chartInstance = new Chart(ctx, {
-                type: 'line',
+                type: 'bar',
                 data: {
-                    labels: ['День 1', 'День 2', 'День 3', 'День 4', 'День 5', 'День 6', 'День 7'],
+                    labels: [],
                     datasets: [{
-                        label: 'Выполнение привычек %',
-                        data: appState.history.dailyHabitPct,
+                        label: 'Выполнено %',
+                        data: [],
+                        backgroundColor: 'rgba(16, 185, 129, 0.75)',
                         borderColor: '#10b981',
-                        backgroundColor: 'rgba(16, 185, 129, 0.1)',
-                        borderWidth: 2,
-                        fill: true,
-                        tension: 0.3,
-                        pointBackgroundColor: '#10b981'
+                        borderWidth: 1,
+                        borderRadius: 6,
+                        maxBarThickness: 32
                     }]
                 },
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
                     plugins: {
-                        legend: { display: false }
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: (ctx) => ` Выполнено: ${ctx.parsed.y}%`
+                            }
+                        }
                     },
                     scales: {
                         y: {
                             min: 0,
                             max: 100,
                             grid: { color: 'rgba(39, 39, 42, 0.5)' },
-                            ticks: { color: '#71717a', font: { size: 10 } }
+                            ticks: {
+                                color: '#71717a',
+                                font: { size: 10 },
+                                callback: (v) => v + '%'
+                            }
                         },
                         x: {
-                            grid: { color: 'rgba(39, 39, 42, 0.5)' },
+                            grid: { display: false },
                             ticks: { color: '#71717a', font: { size: 10 } }
                         }
                     }
                 }
             });
+            updateChartData();
         }
 
         function updateChartData() {
-            if (chartInstance) {
-                chartInstance.data.datasets[0].data = appState.history.dailyHabitPct;
-                chartInstance.update();
-            }
+            if (!chartInstance) return;
+            const records = getAllProgressRecords().slice(-currentChartRange);
+            chartInstance.data.labels = records.map(r => `День ${r.day}`);
+            chartInstance.data.datasets[0].data = records.map(r => r.pct);
+            chartInstance.data.datasets[0].backgroundColor = records.map(r => {
+                if (r.mode === 'RED') return 'rgba(244, 63, 94, 0.7)';
+                if (r.mode === 'YELLOW') return 'rgba(245, 158, 11, 0.7)';
+                return 'rgba(16, 185, 129, 0.75)';
+            });
+            chartInstance.update();
         }
 
         function renderAnalytics() {
+            const records = getAllProgressRecords();
+            const last7 = records.slice(-7);
+
+            const avg7 = last7.length > 0 ? Math.round(last7.reduce((sum, r) => sum + r.pct, 0) / last7.length) : 0;
+            const avg30 = records.length > 0 ? Math.round(records.reduce((sum, r) => sum + r.pct, 0) / records.length) : 0;
+            const productiveDays = records.filter(r => r.pct >= 70 || r.mode === 'YELLOW' || r.mode === 'RED').length;
+
+            document.getElementById('stat-avg-7d').innerText = `${avg7}%`;
+            document.getElementById('stat-avg-30d').innerText = `${avg30}%`;
+            document.getElementById('stat-productive-days').innerText = productiveDays;
+
+            const doneTasks = appState.tasks.filter(t => t.completed).length;
+            document.getElementById('stat-total-tasks').innerText = doneTasks;
+            document.getElementById('stat-all-tasks').innerText = appState.tasks.length;
+
             document.getElementById('stat-count-green').innerText = `${appState.history.modes.GREEN || 0} дн.`;
             document.getElementById('stat-count-yellow').innerText = `${appState.history.modes.YELLOW || 0} дн.`;
             document.getElementById('stat-count-red').innerText = `${appState.history.modes.RED || 0} дн.`;
 
-            document.getElementById('best-habit-streak').innerText = `${appState.streakDays} дней`;
-            document.getElementById('best-porn-streak').innerText = `${appState.abstinence.pornBestStreak || 0} дней`;
-            document.getElementById('best-mast-streak').innerText = `${appState.abstinence.mastBestStreak || 0} дней`;
+            document.getElementById('best-habit-streak').innerText = `${Math.max(appState.streakDays, appState.bestHabitStreak || 0)} дней`;
+            document.getElementById('current-abst-stat').innerText = `${appState.abstinence.streak || 0} дней`;
+            document.getElementById('best-abst-streak').innerText = `${appState.abstinence.bestStreak || 0} дней`;
 
-            // Score estimation
-            const habitPct = appState.habits.length > 0 ? (appState.habits.filter(h => h.completed).length / appState.habits.length) * 100 : 0;
-            document.getElementById('overall-score-pct').innerText = `${Math.round(habitPct)}%`;
+            const totalHabits = appState.habits.length;
+            const doneHabits = appState.habits.filter(h => h.completed).length;
+            const todayPct = totalHabits > 0 ? Math.round((doneHabits / totalHabits) * 100) : 0;
+            document.getElementById('overall-score-pct').innerText = `${todayPct}%`;
+            document.getElementById('analytics-day-num').innerText = appState.currentDay;
+
+            updateChartData();
         }
 
         // --- SETTINGS & BACKUP SYSTEM ---
@@ -1439,8 +1639,8 @@
             if (val >= 1 && val <= 30) {
                 appState.currentDay = val;
                 saveStateToLocalStorage();
-                renderOverview();
-                alert(`Установлен День ${val}`);
+                renderAllViews();
+                showToast(`Установлен День ${val}`);
             }
         }
 
@@ -1449,19 +1649,36 @@
             const doneHabits = appState.habits.filter(h => h.completed).length;
             const habitsPct = totalHabits > 0 ? Math.round((doneHabits / totalHabits) * 100) : 0;
 
-            // Save history of current day habits percentage
-            if (!appState.history.dailyHabitPct) appState.history.dailyHabitPct = [];
-            appState.history.dailyHabitPct.push(habitsPct);
+            // Update streak: in YELLOW/RED modes streak is protected; in GREEN >= 70% keeps streak
+            if (appState.dayMode === 'YELLOW' || appState.dayMode === 'RED' || habitsPct >= 70) {
+                appState.streakDays += 1;
+                if (appState.streakDays > (appState.bestHabitStreak || 0)) {
+                    appState.bestHabitStreak = appState.streakDays;
+                }
+            } else {
+                appState.streakDays = 0;
+            }
+
+            // Save completed day to history
+            if (!appState.history.completedDays) appState.history.completedDays = [];
+            const existingIdx = appState.history.completedDays.findIndex(d => d.day === appState.currentDay);
+            const record = { day: appState.currentDay, pct: habitsPct, mode: appState.dayMode };
+            if (existingIdx >= 0) {
+                appState.history.completedDays[existingIdx] = record;
+            } else {
+                appState.history.completedDays.push(record);
+            }
 
             if (appState.currentDay < 30) {
                 appState.currentDay += 1;
-                // Reset daily habits checklist for the new day
                 appState.habits.forEach(h => h.completed = false);
                 saveStateToLocalStorage();
                 renderAllViews();
-                alert(`Отличная работа! Переходим к Дню ${appState.currentDay} 💪`);
+                showToast(`День зафиксирован (${habitsPct}%)! Начат День ${appState.currentDay}`);
             } else {
-                alert("🎉 ПОЗДРАВЛЯЕМ! Вы успешно завершили 30-дневный челлендж NOVEMBER RESET!");
+                saveStateToLocalStorage();
+                renderAllViews();
+                showToast(`Поздравляем! 30-дневный челлендж NOVEMBER RESET завершён!`);
             }
         }
 
@@ -1473,6 +1690,7 @@
             document.body.appendChild(dlAnchorElem);
             dlAnchorElem.click();
             dlAnchorElem.remove();
+            showToast("Файл резервной копии скачан");
         }
 
         function importAppData(event) {
@@ -1483,9 +1701,9 @@
                     appState = Object.assign({}, appState, importedState);
                     saveStateToLocalStorage();
                     renderAllViews();
-                    alert("Данные успешно импортированы!");
+                    showToast("Данные успешно восстановлены из бекапа!");
                 } catch (err) {
-                    alert("Ошибка чтения JSON файла.");
+                    showToast("Ошибка чтения JSON файла.");
                 }
             };
             if (event.target.files[0]) {
@@ -1494,10 +1712,10 @@
         }
 
         function resetAllAppData() {
-            if (confirm("Вы уверены, что хотите сбросить весь прогресс? Это действие невозможно отменить.")) {
+            askConfirm("Вы уверены, что хотите сбросить весь прогресс? Это действие невозможно отменить.", () => {
                 localStorage.removeItem('NOV_RESET_STATE_V1');
                 location.reload();
-            }
+            });
         }
 
         // --- MODAL UTILITIES ---
