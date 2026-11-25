@@ -39,6 +39,7 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sortablejs@1.15.2/Sortable.min.js"></script>
     <style>
         body {
             font-family: 'Inter', sans-serif;
@@ -80,6 +81,40 @@
         .hide-scrollbar {
             -ms-overflow-style: none;
             scrollbar-width: none;
+        }
+        .sortable-ghost {
+            opacity: 0.28 !important;
+            border: 1.5px dashed rgba(16, 185, 129, 0.7) !important;
+            background: rgba(16, 185, 129, 0.06) !important;
+            transform: scale(0.985);
+            transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+        }
+        .sortable-chosen {
+            border-color: rgba(16, 185, 129, 0.75) !important;
+            background: #18181d !important;
+            transform: scale(1.02);
+            box-shadow: 0 18px 38px rgba(0, 0, 0, 0.75), 0 0 0 1px rgba(16, 185, 129, 0.35);
+            z-index: 50;
+            transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s ease, background-color 0.2s ease !important;
+        }
+        .sortable-drag {
+            cursor: grabbing !important;
+            opacity: 0.97 !important;
+            transform: scale(1.025) rotate(0.4deg);
+            box-shadow: 0 24px 48px rgba(0, 0, 0, 0.85), 0 0 22px rgba(16, 185, 129, 0.28);
+            transition: none !important;
+            will-change: transform;
+        }
+        .draggable-card {
+            user-select: none;
+            -webkit-user-select: none;
+            touch-action: pan-y;
+            cursor: grab;
+            will-change: transform;
+            transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease, background-color 0.2s ease;
+        }
+        .draggable-card:active {
+            cursor: grabbing;
         }
     </style>
 </head>
@@ -362,7 +397,7 @@
             <div class="flex items-center justify-between">
                 <div>
                     <h2 class="text-2xl font-bold text-white">Трекер привычек</h2>
-                    <p class="text-xs text-zinc-400 mt-1">Формируй полезные действия каждый день. Выполняй по очереди.</p>
+                    <p class="text-xs text-zinc-400 mt-1">Зажми любую карточку и плавно перетащи её в нужное место.</p>
                 </div>
                 <button onclick="openAddHabitModal()" class="px-3.5 py-2 rounded-xl bg-brand-500 hover:bg-brand-600 text-zinc-950 font-bold text-xs flex items-center space-x-1">
                     <i data-lucide="plus" class="w-4 h-4"></i>
@@ -1109,27 +1144,71 @@
         }
 
         // --- HABITS TAB LOGIC ---
+        let habitsSortable = null;
+        let routineSortable = null;
+
         function renderHabits() {
             const container = document.getElementById('habits-full-list');
             container.innerHTML = '';
 
-            appState.habits.forEach(h => {
+            appState.habits.forEach((h) => {
                 const card = document.createElement('div');
-                card.className = `p-4 rounded-xl border flex items-center justify-between transition-all ${h.completed ? 'bg-brand-500/10 border-brand-500/30' : 'glass-card border-dark-border'}`;
+                card.setAttribute('data-id', h.id);
+                card.className = `draggable-card p-4 rounded-xl border flex items-center justify-between gap-3 transition-all ${h.completed ? 'bg-brand-500/10 border-brand-500/30' : 'glass-card border-dark-border hover:border-zinc-700'}`;
                 card.innerHTML = `
-                    <div class="flex items-center space-x-3 cursor-pointer" onclick="toggleHabit('${h.id}')">
-                        <div class="w-6 h-6 rounded-lg border flex items-center justify-center transition-all ${h.completed ? 'bg-brand-500 border-brand-500 text-zinc-950' : 'border-zinc-700 bg-dark-bg'}">
-                            ${h.completed ? '<i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>' : ''}
+                    <div class="flex items-center space-x-3 flex-1 min-w-0">
+                        <i data-lucide="grip-vertical" class="w-4 h-4 text-zinc-600 shrink-0"></i>
+                        <div class="flex items-center space-x-3 cursor-pointer flex-1 min-w-0" onclick="toggleHabit('${h.id}')">
+                            <div class="w-6 h-6 rounded-lg border flex items-center justify-center shrink-0 transition-all ${h.completed ? 'bg-brand-500 border-brand-500 text-zinc-950' : 'border-zinc-700 bg-dark-bg'}">
+                                ${h.completed ? '<i data-lucide="check" class="w-4 h-4 stroke-[3]"></i>' : ''}
+                            </div>
+                            <span class="text-sm font-medium truncate ${h.completed ? 'line-through text-zinc-400' : 'text-white'}">${h.title}</span>
                         </div>
-                        <span class="text-sm font-medium ${h.completed ? 'line-through text-zinc-400' : 'text-white'}">${h.title}</span>
                     </div>
-                    <button onclick="deleteHabit('${h.id}')" class="text-zinc-600 hover:text-rose-400 p-1">
+                    <button onclick="deleteHabit('${h.id}')" class="no-drag text-zinc-600 hover:text-rose-400 p-1.5 rounded-lg hover:bg-zinc-800/70 transition-colors shrink-0" title="Удалить">
                         <i data-lucide="trash-2" class="w-4 h-4"></i>
                     </button>
                 `;
                 container.appendChild(card);
             });
             lucide.createIcons();
+            initHabitsSortable();
+        }
+
+        function initHabitsSortable() {
+            const container = document.getElementById('habits-full-list');
+            if (!container || typeof Sortable === 'undefined') return;
+            if (habitsSortable) habitsSortable.destroy();
+            habitsSortable = new Sortable(container, {
+                animation: 320,
+                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                forceFallback: true,
+                fallbackOnBody: true,
+                fallbackTolerance: 4,
+                delay: 120,
+                delayOnTouchOnly: true,
+                touchStartThreshold: 5,
+                swapThreshold: 0.65,
+                invertSwap: true,
+                scroll: true,
+                scrollSensitivity: 60,
+                scrollSpeed: 12,
+                filter: '.no-drag',
+                preventOnFilter: false,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onChoose: function () {
+                    if (navigator.vibrate) navigator.vibrate(12);
+                },
+                onEnd: function (evt) {
+                    if (evt.oldIndex === evt.newIndex) return;
+                    const [moved] = appState.habits.splice(evt.oldIndex, 1);
+                    appState.habits.splice(evt.newIndex, 0, moved);
+                    saveStateToLocalStorage();
+                    renderOverview();
+                }
+            });
         }
 
         function toggleHabit(id) {
@@ -1174,16 +1253,20 @@
 
             appState.routine.forEach((r) => {
                 const item = document.createElement('div');
-                item.className = "glass-card p-4 rounded-xl border border-dark-border flex items-start md:items-center justify-between gap-3 group";
+                item.setAttribute('data-id', r.id);
+                item.className = "draggable-card glass-card p-4 rounded-xl border border-dark-border hover:border-zinc-700 flex items-center justify-between gap-3 transition-all";
                 item.innerHTML = `
-                    <div class="flex items-start md:items-center space-x-3">
-                        <span class="px-2.5 py-1 rounded-md bg-zinc-800 text-brand-400 font-mono text-xs font-bold border border-zinc-700 shrink-0">${r.time}</span>
-                        <div>
-                            <h4 class="text-sm font-semibold text-white">${r.title}</h4>
-                            ${r.desc ? `<p class="text-xs text-zinc-400 mt-0.5">${r.desc}</p>` : ''}
+                    <div class="flex items-center space-x-3 flex-1 min-w-0">
+                        <i data-lucide="grip-vertical" class="w-4 h-4 text-zinc-600 shrink-0"></i>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-1.5 sm:gap-3 min-w-0">
+                            <span class="px-2.5 py-1 rounded-md bg-zinc-800 text-brand-400 font-mono text-xs font-bold border border-zinc-700 self-start sm:self-auto shrink-0">${r.time}</span>
+                            <div class="min-w-0">
+                                <h4 class="text-sm font-semibold text-white truncate">${r.title}</h4>
+                                ${r.desc ? `<p class="text-xs text-zinc-400 mt-0.5 truncate">${r.desc}</p>` : ''}
+                            </div>
                         </div>
                     </div>
-                    <div class="flex items-center space-x-1 shrink-0">
+                    <div class="no-drag flex items-center space-x-1 shrink-0">
                         <button onclick="openRoutineModal('${r.id}')" class="p-1.5 rounded-lg text-zinc-400 hover:text-white hover:bg-zinc-800 transition-colors" title="Редактировать">
                             <i data-lucide="pencil" class="w-4 h-4"></i>
                         </button>
@@ -1195,6 +1278,42 @@
                 container.appendChild(item);
             });
             lucide.createIcons();
+            initRoutineSortable();
+        }
+
+        function initRoutineSortable() {
+            const container = document.getElementById('routine-timeline');
+            if (!container || typeof Sortable === 'undefined') return;
+            if (routineSortable) routineSortable.destroy();
+            routineSortable = new Sortable(container, {
+                animation: 320,
+                easing: 'cubic-bezier(0.16, 1, 0.3, 1)',
+                forceFallback: true,
+                fallbackOnBody: true,
+                fallbackTolerance: 4,
+                delay: 120,
+                delayOnTouchOnly: true,
+                touchStartThreshold: 5,
+                swapThreshold: 0.65,
+                invertSwap: true,
+                scroll: true,
+                scrollSensitivity: 60,
+                scrollSpeed: 12,
+                filter: '.no-drag',
+                preventOnFilter: false,
+                ghostClass: 'sortable-ghost',
+                chosenClass: 'sortable-chosen',
+                dragClass: 'sortable-drag',
+                onChoose: function () {
+                    if (navigator.vibrate) navigator.vibrate(12);
+                },
+                onEnd: function (evt) {
+                    if (evt.oldIndex === evt.newIndex) return;
+                    const [moved] = appState.routine.splice(evt.oldIndex, 1);
+                    appState.routine.splice(evt.newIndex, 0, moved);
+                    saveStateToLocalStorage();
+                }
+            });
         }
 
         function openRoutineModal(id = null) {
